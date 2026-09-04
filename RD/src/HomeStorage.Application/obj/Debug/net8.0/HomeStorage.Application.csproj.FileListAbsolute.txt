@@ -1,0 +1,16 @@
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\bin\Debug\net8.0\HomeStorage.Application.deps.json
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\bin\Debug\net8.0\HomeStorage.Application.dll
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\bin\Debug\net8.0\HomeStorage.Application.pdb
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\bin\Debug\net8.0\HomeStorage.Domain.dll
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\bin\Debug\net8.0\HomeStorage.Domain.pdb
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.csproj.AssemblyReference.cache
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.AssemblyInfoInputs.cache
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.AssemblyInfo.cs
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.csproj.CoreCompileInputs.cache
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.sourcelink.json
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStor.B3FD8DD3.Up2Date
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.dll
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\refint\HomeStorage.Application.dll
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\HomeStorage.Application.pdb
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Application\obj\Debug\net8.0\ref\HomeStorage.Application.dll
