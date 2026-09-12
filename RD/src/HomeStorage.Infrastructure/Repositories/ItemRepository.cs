@@ -12,8 +12,8 @@ public class ItemRepository : Repository<Item>, IItemRepository
     public async Task<IEnumerable<string>> GetDistinctLocationsAsync()
     {
         return await _context.Items
-            .Where(i => !string.IsNullOrEmpty(i.Location))
-            .Select(i => i.Location!)
+            .Where(i => i.Location != null)
+            .Select(i => i.Location!.Name)
             .Distinct()
             .ToListAsync();
     }

@@ -47,46 +47,61 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Plus, Grid, Folder } from '@element-plus/icons-vue'
 import { useUserStore } from '../stores/userStore'
 import { ElMessage } from 'element-plus'
 import type { Category } from '../types/item'
+import { getCategoriesApi, createCategoryApi } from '../api/storage' // 引入真实 API
 
 const userStore = useUserStore()
 const activeCategory = ref('all')
 const showAddDialog = ref(false)
 const newCategoryName = ref('')
+const categories = ref<Category[]>([]) // 初始化为空，等接口返回
 
 // 定义向父组件传递的事件（当用户点击分类时）
 const emit = defineEmits(['select-category'])
 
-// 模拟分类数据
-const categories = ref<Category[]>([
-  { id: 1, name: '食品饮料', isPublic: true },
-  { id: 2, name: '日常药品', isPublic: true },
-  { id: 3, name: '数码工具', isPublic: true },
-  { id: 4, name: '重要证件', isPublic: false } // 隐私分类
-])
+// 从后端获取分类列表
+const loadCategories = async () => {
+  try {
+    const res = await getCategoriesApi()
+    categories.value = res
+  } catch (error) {
+    console.error('获取分类失败', error)
+  }
+}
+
+// 页面挂载时调用接口
+onMounted(() => {
+  loadCategories()
+})
 
 const handleSelect = (index: string) => {
   activeCategory.value = index
   emit('select-category', index)
 }
 
-const handleAddCategory = () => {
+const handleAddCategory = async () => {
   if (!newCategoryName.value.trim()) {
     ElMessage.warning('分类名称不能为空')
     return
   }
-  categories.value.push({
-    id: Date.now(),
-    name: newCategoryName.value,
-    isPublic: true
-  })
-  newCategoryName.value = ''
-  showAddDialog.value = false
-  ElMessage.success('添加分类成功')
+
+  try {
+    await createCategoryApi({
+      name: newCategoryName.value,
+      isPublic: true
+    })
+    ElMessage.success('添加分类成功')
+    newCategoryName.value = ''
+    showAddDialog.value = false
+    // 重新加载分类列表
+    loadCategories()
+  } catch (error) {
+    console.error('添加分类失败', error)
+  }
 }
 </script>
 

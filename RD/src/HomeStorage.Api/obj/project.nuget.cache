@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "S3kyQv7K1m8=",
+  "dgSpecHash": "c2JU1XCh4sw=",
   "success": true,
   "projectFilePath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\M660779\\.nuget\\packages\\bcrypt.net-next\\4.2.0\\bcrypt.net-next.4.2.0.nupkg.sha512",
     "C:\\Users\\M660779\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\M660779\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.26\\microsoft.aspnetcore.openapi.8.0.26.nupkg.sha512",
     "C:\\Users\\M660779\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",

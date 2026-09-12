@@ -74,11 +74,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Search, Plus } from '@element-plus/icons-vue'
 import { useUserStore } from '../stores/userStore'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Item } from '../types/item'
+import { getItemsApi, deleteItemApi } from '../api/storage'
 
 // 接收父组件传递的筛选条件
 const props = defineProps<{
@@ -88,62 +89,42 @@ const props = defineProps<{
 
 const userStore = useUserStore()
 const searchQuery = ref('')
+const items = ref<Item[]>([])
+const loading = ref(false)
 const showAddModal = ref(false)
 const defaultImage = 'https://cube.elemecdn.com/e/fd/0ce71b31860b5f5509000926919c7png.png'
 
-// 模拟物品 Mock 数据
-const items = ref<Item[]>([
-  {
-    id: 101,
-    name: '纯棉白T恤',
-    category: '1788770285364', // 对应你刚刚新增的上衣T恤ID（模拟）
-    location: '主卧衣柜顶部',
-    quantity: 3,
-    imageUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-    isPublic: true,
-    createdAt: '',
-    updatedAt: ''
-  },
-  {
-    id: 102,
-    name: '感冒灵颗粒',
-    category: '2',
-    location: '客厅茶几抽屉',
-    quantity: 2,
-    isPublic: true,
-    createdAt: '',
-    updatedAt: ''
-  },
-  {
-    id: 103,
-    name: '房产证',
-    category: '4',
-    location: '书房书架二层',
-    quantity: 1,
-    isPublic: false, // 游客不可见的隐私物品
-    createdAt: '',
-    updatedAt: ''
+// 真实接口请求数据
+const loadItems = async () => {
+  loading.value = true
+  try {
+    const res = await getItemsApi({
+      categoryId: props.categoryId === 'all' ? undefined : props.categoryId,
+      location: props.location === 'all' ? undefined : props.location
+    })
+    items.value = res
+  } catch (error) {
+    console.error('获取物品列表失败', error)
+  } finally {
+    loading.value = false
   }
-])
+}
+
+// 当选中的分类或位置发生变化时，重新请求后端
+watch(() => [props.categoryId, props.location], () => {
+  loadItems()
+})
+
+onMounted(() => {
+  loadItems()
+})
 
 // 核心：根据【分类 + 位置 + 关键词 + 用户权限】联动过滤物品
 const filteredItems = computed(() => {
   return items.value.filter(item => {
     // 1. 权限过滤：如果是游客，隐藏 isPublic 为 false 的物品
-    if (!userStore.isAdmin && !item.isPublic) {
-      return false
-    }
-
-    // 2. 分类过滤
-    const matchesCategory = props.categoryId === 'all' || item.category === props.categoryId
-
-    // 3. 位置过滤
-    const matchesLocation = props.location === 'all' || item.location === props.location
-
-    // 4. 搜索框关键词过滤
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-
-    return matchesCategory && matchesLocation && matchesSearch
+    if (!userStore.isAdmin && !item.isPublic) return false
+    return item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
 
@@ -152,10 +133,16 @@ const handleDelete = (id: number) => {
     confirmButtonText: '删除',
     cancelButtonText: '取消',
     type: 'warning'
-  }).then(() => {
-    items.value = items.value.filter(i => i.id !== id)
-    ElMessage.success('物品已删除')
-  }).catch(() => {})
+  }).then(async () => {
+    try{
+        await deleteItemApi(id)
+        ElMessage.success('物品已删除')
+        loadItems() // 重新刷一遍列表
+    }catch (error) {
+      console.error('删除物品失败', error)
+    }
+    
+  })
 }
 </script>
 

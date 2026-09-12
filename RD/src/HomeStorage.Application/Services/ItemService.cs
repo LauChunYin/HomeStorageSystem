@@ -15,6 +15,15 @@ public class ItemService : IItemService
         _itemRepository = itemRepository;
     }
 
+    // 获取所有用户信息
+    public async Task<IEnumerable<ItemResponseDto>> GetAllUsersAsync()
+    {
+        
+        var items = await _itemRepository.GetAllAsync();
+        // 将数据库里的 Item 实体列表逐个转换为给前端看的 ItemResponseDto
+        return items.Select(MapToResponseDto);
+    }
+
     // 1. 获取所有物品
     public async Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync()
     {
@@ -40,7 +49,7 @@ public class ItemService : IItemService
     public async Task<ItemResponseDto> CreateItemAsync(CreateItemDto dto)
     {
         // ① 调用领域模型 Item 的静态工厂方法校验并生成实体
-        var item = Item.Create(dto.Name, dto.Category, dto.Location, dto.Quantity, dto.ImageUrl);
+        var item = Item.Create(dto.Name, dto.CategoryId, dto.LocationId, dto.Quantity, dto.ImageUrl);
 
         // ② 扔给仓储管家放入内存追踪
         await _itemRepository.AddAsync(item);
@@ -60,7 +69,7 @@ public class ItemService : IItemService
         if (item == null) return null; // 查不到直接返回 null
 
         // ② 调用实体对象的实例方法 UpdateInfo 修改内部数据
-        item.UpdateInfo(dto.Name, dto.Category, dto.Location, dto.Quantity, dto.ImageUrl);
+        item.UpdateInfo(dto.Name, dto.CategoryId, dto.LocationId, dto.Quantity, dto.ImageUrl);
 
         // ③ 标记为 Update 状态
         _itemRepository.Update(item);

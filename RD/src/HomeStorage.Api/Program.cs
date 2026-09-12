@@ -2,6 +2,7 @@ using HomeStorage.Application.Interfaces;
 using HomeStorage.Application.Services;
 using HomeStorage.Domain.Interfaces;
 using HomeStorage.Infrastructure.Data;
+using HomeStorage.Infrastructure.Middlewares;
 using HomeStorage.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); // 开启 Swagger 可视化测试页面
 
 var app = builder.Build();
+
+// 注入全局异常拦截中间件（必须放在最靠前的位置）
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // 3. 配置 HTTP 请求管道
 if (app.Environment.IsDevelopment())

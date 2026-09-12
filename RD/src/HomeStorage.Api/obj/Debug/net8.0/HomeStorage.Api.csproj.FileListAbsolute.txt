@@ -116,3 +116,4 @@ D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Api\obj\Debug\net8.0\r
 D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Api\obj\Debug\net8.0\HomeStorage.Api.pdb
 D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Api\obj\Debug\net8.0\HomeStorage.Api.genruntimeconfig.cache
 D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Api\obj\Debug\net8.0\ref\HomeStorage.Api.dll
+D:\LJX\OwnRepository\HomeStorageSystem\RD\src\HomeStorage.Api\bin\Debug\net8.0\BCrypt-Net-Next.dll

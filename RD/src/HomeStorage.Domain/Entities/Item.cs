@@ -7,8 +7,13 @@ public class Item
 {
     public int Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
-    public string Category { get; private set; } = string.Empty;
-    public string? Location { get; private set; }
+
+    public int CategoryId { get; private set; }
+    public Category Category { get; private set; } = null!;
+
+    public int? LocationId { get; private set; }
+    public Location? Location { get; private set; }
+
     public int Quantity { get; private set; }
     public string? ImageUrl { get; private set; }
     public DateTime CreatedAt { get; private set; }
@@ -20,13 +25,13 @@ public class Item
     /// <summary>
     /// 工厂方法：用于安全创建新物品（保证创建时刻数据合法）
     /// </summary>
-    public static Item Create(string name, string category, string? location, int quantity, string? imageUrl)
+    public static Item Create(string name, int categoryId, int? locationId, int quantity, string? imageUrl)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("物品名称不能为空", nameof(name));
 
-        if (string.IsNullOrWhiteSpace(category))
-            throw new ArgumentException("物品分类不能为空", nameof(category));
+        if (categoryId <= 0)
+            throw new ArgumentException("物品分类不能为空", nameof(categoryId));
 
         if (quantity < 0)
             throw new ArgumentOutOfRangeException(nameof(quantity), "库存数量不能为负数");
@@ -34,8 +39,8 @@ public class Item
         return new Item
         {
             Name = name.Trim(),
-            Category = category.Trim(),
-            Location = location?.Trim(),
+            CategoryId = categoryId,
+            LocationId = locationId,
             Quantity = quantity,
             ImageUrl = imageUrl,
             CreatedAt = DateTime.UtcNow,
@@ -46,20 +51,20 @@ public class Item
     /// <summary>
     /// 领域业务方法：修改物品基本信息
     /// </summary>
-    public void UpdateInfo(string name, string category, string? location, int quantity, string? imageUrl)
+    public void UpdateInfo(string name, int categoryId, int? locationId, int quantity, string? imageUrl)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("物品名称不能为空", nameof(name));
 
-        if (string.IsNullOrWhiteSpace(category))
-            throw new ArgumentException("物品分类不能为空", nameof(category));
+        if (categoryId <= 0)
+            throw new ArgumentException("物品分类不能为空", nameof(categoryId));
 
         if (quantity < 0)
             throw new ArgumentOutOfRangeException(nameof(quantity), "库存数量不能为负数");
 
         Name = name.Trim();
-        Category = category.Trim();
-        Location = location?.Trim();
+        CategoryId = categoryId;
+        LocationId = locationId;
         Quantity = quantity;
 
         if (!string.IsNullOrEmpty(imageUrl))
