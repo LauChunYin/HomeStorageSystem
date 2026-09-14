@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HomeStorage.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96ba0ca4df1baa86abc126d4a804c21faa1b6c88")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6279dd48a29ccc2e8a9c47fdbaf5449b00eca4b")]
 [assembly: System.Reflection.AssemblyProductAttribute("HomeStorage.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HomeStorage.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
