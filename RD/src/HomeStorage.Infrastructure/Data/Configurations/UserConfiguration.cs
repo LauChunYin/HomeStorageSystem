@@ -16,6 +16,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasMaxLength(100);
             
+        //1. 建立用户名全局唯一索引
+        builder.HasIndex(e => e.UserName).IsUnique();
+
         builder.Property(e => e.Password)
             .IsRequired()
             .HasMaxLength(500);
@@ -23,9 +26,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.ImageUrl)
             .HasMaxLength(500);
 
-        // 配置与 Category 的外键关系
         builder.HasOne(e => e.Role)
-            .WithMany()
+            .WithMany(r => r.Users)
             .HasForeignKey(e => e.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
 

@@ -26,14 +26,14 @@ public class UserService : IUserService
     // 根据 用户名 查询单个用户信息
     public async Task<UserResponseDto?> GetUserByUserNameAsync(string userName)
     {
-        var user = await _userRepository.GetUserByName(userName);
+        var user = await _userRepository.GetUserByNameAsync(userName);
         return user == null ? null :MapToResponseDto(user);
     }
 
     // 创建新用户
     public async Task<UserResponseDto> CreateUserAsync(CreateUserDto dto)
     {
-        var existingUser = await _userRepository.GetUserByName(dto.UserName);
+        var existingUser = await _userRepository.GetUserByNameAsync(dto.UserName);
         if(existingUser is not null)
             throw new BusinessException("用户名已使用，请更换其它用户名");
 

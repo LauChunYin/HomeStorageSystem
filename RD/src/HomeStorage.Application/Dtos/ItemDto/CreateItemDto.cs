@@ -9,11 +9,10 @@ public class CreateItemDto
     [MaxLength(100, ErrorMessage = "物品名称长度不能超过100个字符")]
     public string Name { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "分类不能为空")]
-    [MaxLength(50, ErrorMessage = "分类名称长度不能超过50个字符")]
+    [Range(1, int.MaxValue, ErrorMessage = "必须选择有效的分类")]
     public int CategoryId { get; set; }
 
-    [MaxLength(100, ErrorMessage = "存放位置长度不能超过100个字符")]
+    [Range(1, int.MaxValue, ErrorMessage = "必须选择有效的存放位置")]
     public int? LocationId { get; set; }
 
     [Range(0, int.MaxValue, ErrorMessage = "库存数量不能为负数")]

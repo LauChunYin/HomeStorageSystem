@@ -97,8 +97,10 @@ public class ItemService : IItemService
         {
             Id = item.Id,
             Name = item.Name,
-            Category = item.Category,
-            Location = item.Location,
+            CategoryId = item.CategoryId,
+            CategoryName = item.Category?.Name ?? string.Empty,
+            LocationId = item.LocationId,
+            LocationName = item.Location?.Name,
             Quantity = item.Quantity,
             ImageUrl = item.ImageUrl,
             CreatedAt = item.CreatedAt,

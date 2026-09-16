@@ -21,13 +21,13 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
 
         // 配置与 Category 的外键关系
         builder.HasOne(e => e.Category)
-            .WithMany()
+            .WithMany(c => c.Items)
             .HasForeignKey(e => e.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // 配置与 Location 的外键关系（可空）
         builder.HasOne(e => e.Location)
-            .WithMany()
+            .WithMany(l => l.Items)
             .HasForeignKey(e => e.LocationId)
             .OnDelete(DeleteBehavior.SetNull);
 

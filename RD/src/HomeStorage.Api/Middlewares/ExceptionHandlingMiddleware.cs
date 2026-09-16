@@ -1,8 +1,7 @@
 using System.Net;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 
-namespace HomeStorage.Infrastructure.Middlewares;
+namespace HomeStorage.Api.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {

@@ -11,5 +11,5 @@ public class UserResponseDto
     public string RoleName { get; set; } = string.Empty;
     public string RoleCode { get; set; } = string.Empty;
 
-    public List<string> Permissions{ get;set; }= new();
+    public List<string> Permissions{ get;set; } = new();
 }

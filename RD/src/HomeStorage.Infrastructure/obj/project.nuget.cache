@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "LkxafgRxP84=",
+  "dgSpecHash": "Y/LDJdf0H/M=",
   "success": true,
   "projectFilePath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\M660779\\.nuget\\packages\\bcrypt.net-next\\4.2.0\\bcrypt.net-next.4.2.0.nupkg.sha512",
+    "C:\\Users\\M660779\\.nuget\\packages\\efcore.namingconventions\\8.0.0\\efcore.namingconventions.8.0.0.nupkg.sha512",
     "C:\\Users\\M660779\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\M660779\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\M660779\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.3\\microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",

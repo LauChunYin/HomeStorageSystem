@@ -1,11 +1,13 @@
 using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HomeStorage.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")] // 访问路径：/api/items
+[Authorize]
 public class ItemsController : ControllerBase
 {
     private readonly IItemService _itemService;
@@ -20,8 +22,7 @@ public class ItemsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetAll()
     {
-        var items = await _itemService.GetAllItemsAsync();
-        return Ok(items);
+        return Ok(await _itemService.GetAllItemsAsync());
     }
 
     // 2. GET: /api/items/5 (根据 Id 获取单个物品)
@@ -37,8 +38,7 @@ public class ItemsController : ControllerBase
     [HttpGet("locations")]
     public async Task<ActionResult<IEnumerable<string>>> GetLocations()
     {
-        var locations = await _itemService.GetLocationsAsync();
-        return Ok(locations);
+        return Ok(await _itemService.GetLocationsAsync());
     }
 
     // 4. POST: /api/items (创建新物品)

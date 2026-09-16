@@ -2,6 +2,7 @@ using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace HomeStorage.Api.Controllers;
 
@@ -25,8 +26,8 @@ public class UsersController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetAllUsers()
     {
-        var items = await _userService.GetAllUsersAsync();
-        return Ok(items);
+        var users = await _userService.GetAllUsersAsync();
+        return Ok(users);
     }
 
     // 2. POST: /api/users (创建用户)
@@ -35,8 +36,8 @@ public class UsersController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<UserResponseDto>> CreateUser([FromBody] CreateUserDto dto)
     {
-        var item = await _userService.CreateUserAsync(dto);
-        return CreatedAtAction(nameof(GetUserbyName), new { userName = item.UserName }, item);
+        var user = await _userService.CreateUserAsync(dto);
+        return CreatedAtAction(nameof(GetUserbyName), new { userName = user.UserName }, user);
     }
 
     // 3. DELETE: /api/users/id (删除用户)
@@ -56,8 +57,15 @@ public class UsersController : ControllerBase
     [Authorize]
     public async Task<ActionResult<UserResponseDto>> GetUserbyName(string userName)
     {
-        var items = await _userService.GetUserByUserNameAsync(userName);
-        return Ok(items);
+        var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
+        if(currentUserName != userName && !User.IsInRole("Admin"))
+        {
+            return Forbid();
+        }
+
+        var user = await _userService.GetUserByUserNameAsync(userName);
+        if(user == null) return NotFound("未找到该用户");
+        return Ok(user);
     }
 
     //仅用户本人可以用
@@ -66,6 +74,8 @@ public class UsersController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateUserInfo(int id, [FromBody] UpdateUserInfoDto dto)
     {
+        if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
+
         await _userService.UpdateUserInfoAsync(id, dto);
         return NoContent();
     }
@@ -75,7 +85,17 @@ public class UsersController : ControllerBase
     [HttpPut("{id:int}/Password")]
     public async Task<IActionResult> ChangeUserPassword(int id, [FromBody] ChangePasswordDto dto)
     {
+        if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
+        
         await _userService.ChangePasswordAsync(id, dto);
         return NoContent();
+    }
+
+    // 辅助校验：判断是否为本人或管理员
+    private bool IsOwnerOrAdmin(int targetUserId)
+    {
+        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == targetUserId) 
+               || User.IsInRole("Admin");
     }
 }

@@ -4,6 +4,6 @@ namespace HomeStorage.Domain.Interfaces;
 
 public interface IUserRepository : IRepository<User>
 {
-    Task<User?> GetUserByName(string userName);
+    Task<User?> GetUserByNameAsync(string userName);
     Task<bool> SaveChangesAsync();
 }

@@ -10,7 +10,7 @@ public class UserRepository : Repository<User>, IUserRepository
     public UserRepository(AppDbContext context) : base(context) { }
     
     
-    public async Task<User?> GetUserByName(string userName)
+    public async Task<User?> GetUserByNameAsync(string userName)
     {
         return await _context.Users
         .Include(u => u.Role)
