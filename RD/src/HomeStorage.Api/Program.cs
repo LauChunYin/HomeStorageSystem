@@ -45,10 +45,14 @@ builder.Services.AddAuthentication(options =>
 // 告诉系统：当有人要 IItemRepository 时，给它 new 一个 ItemRepository
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 
 // 告诉系统：当有人要 IItemService 时，给它 new 一个 ItemService
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

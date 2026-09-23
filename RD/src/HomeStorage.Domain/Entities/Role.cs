@@ -8,4 +8,7 @@ public class Role
 
     public ICollection<User> Users { get; set; } = new List<User>();
     public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
+    
+    public ICollection<RoleCategory> RoleCategories { get; set; } = new List<RoleCategory>();
+    public ICollection<RoleLocation> RoleLocations { get; set; } = new List<RoleLocation>();
 }

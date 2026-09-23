@@ -69,9 +69,9 @@ public class UsersController : ControllerBase
     }
 
     //仅用户本人可以用
-    // 5. PUT: /api/users/id (修改用户信息)
+    // 5. PUT: /api/users/id/Profile (修改用户信息)
     //返回：204
-    [HttpPut("{id:int}")]
+    [HttpPut("{id:int}/profile")]
     public async Task<IActionResult> UpdateUserInfo(int id, [FromBody] UpdateUserInfoDto dto)
     {
         if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
@@ -80,7 +80,7 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // 6. PUT: /api/users/id (修改用户密码)
+    // 6. PUT: /api/users/id/Password (修改用户密码)
     //返回：204
     [HttpPut("{id:int}/Password")]
     public async Task<IActionResult> ChangeUserPassword(int id, [FromBody] ChangePasswordDto dto)

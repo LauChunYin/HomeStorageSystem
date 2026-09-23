@@ -9,6 +9,11 @@ public class AppDbContext : DbContext
 
     public DbSet<Item> Items => Set<Item>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Location> Locations => Set<Location>();
+    public DbSet<RoleCategory> RoleCategories => Set<RoleCategory>();
+    public DbSet<RoleLocation> RoleLocations => Set<RoleLocation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
