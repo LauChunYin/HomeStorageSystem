@@ -15,15 +15,6 @@ public class ItemService : IItemService
         _itemRepository = itemRepository;
     }
 
-    // 获取所有用户信息
-    public async Task<IEnumerable<ItemResponseDto>> GetAllUsersAsync()
-    {
-        
-        var items = await _itemRepository.GetAllAsync();
-        // 将数据库里的 Item 实体列表逐个转换为给前端看的 ItemResponseDto
-        return items.Select(MapToResponseDto);
-    }
-
     // 1. 获取所有物品
     public async Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync()
     {
@@ -40,9 +31,10 @@ public class ItemService : IItemService
     }
 
     // 3. 获取所有存放位置
-    public async Task<IEnumerable<string>> GetLocationsAsync()
+    public async Task<IEnumerable<ItemResponseDto>> GetItemsByCategoryAndLocationAsync(int categoryId, int locationId)
     {
-        return await _itemRepository.GetDistinctLocationsAsync();
+        var items = await _itemRepository.GetItemsByCategoryAndLocationAsync(categoryId, locationId);
+        return items.Select(MapToResponseDto);
     }
 
     // 4. 创建新物品

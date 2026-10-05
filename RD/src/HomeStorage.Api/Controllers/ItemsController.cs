@@ -2,6 +2,7 @@ using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace HomeStorage.Api.Controllers;
 
@@ -20,6 +21,7 @@ public class ItemsController : ControllerBase
 
     // 1. GET: /api/items (获取所有物品)
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetAll()
     {
         return Ok(await _itemService.GetAllItemsAsync());
@@ -27,6 +29,7 @@ public class ItemsController : ControllerBase
 
     // 2. GET: /api/items/5 (根据 Id 获取单个物品)
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ItemResponseDto>> GetById(int id)
     {
         var item = await _itemService.GetItemByIdAsync(id);
@@ -35,14 +38,16 @@ public class ItemsController : ControllerBase
     }
 
     // 3. GET: /api/items/locations (获取所有存放位置)
-    [HttpGet("locations")]
-    public async Task<ActionResult<IEnumerable<string>>> GetLocations()
+    [HttpGet("{categoryId:int}/{locationId:int}")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemsByCategoryAndLocation(int categoryId, int locationId)
     {
-        return Ok(await _itemService.GetLocationsAsync());
+        return Ok(await _itemService.GetItemsByCategoryAndLocationAsync(categoryId, locationId));
     }
 
     // 4. POST: /api/items (创建新物品)
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<ItemResponseDto>> Create([FromBody] CreateItemDto dto)
     {
         var createdItem = await _itemService.CreateItemAsync(dto);
@@ -52,6 +57,7 @@ public class ItemsController : ControllerBase
 
     // 5. PUT: /api/items/5 (修改物品)
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<ActionResult<ItemResponseDto>> Update(int id, [FromBody] UpdateItemDto dto)
     {
         var updatedItem = await _itemService.UpdateItemAsync(id, dto);
@@ -61,10 +67,19 @@ public class ItemsController : ControllerBase
 
     // 6. DELETE: /api/items/5 (删除物品)
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var success = await _itemService.DeleteItemAsync(id);
         if (!success) return NotFound(new { message = $"未找到 ID 为 {id} 的物品" });
         return NoContent(); // 返回 204 无内容
+    }
+
+    // 辅助校验：判断是否为本人或管理员
+    private bool IsOwnerOrAdmin(int targetUserId)
+    {
+        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == targetUserId)
+               || User.IsInRole("Admin");
     }
 }

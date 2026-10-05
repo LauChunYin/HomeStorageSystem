@@ -10,8 +10,8 @@ public interface IItemService
     // 根据 Id 查询单个物品
     Task<ItemResponseDto?> GetItemByIdAsync(int id);
 
-    // 获取所有不重复的存放位置列表
-    Task<IEnumerable<string>> GetLocationsAsync();
+    // 获取所有指定位置的物品列表
+    Task<IEnumerable<ItemResponseDto>> GetItemsByCategoryAndLocationAsync(int categoryId, int locationId);
 
     // 创建新物品
     Task<ItemResponseDto> CreateItemAsync(CreateItemDto dto);

@@ -1,37 +1,44 @@
 {
   "format": 1,
   "restore": {
-    "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj": {}
+    "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj": {}
   },
   "projects": {
-    "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj": {
+    "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj",
+        "projectUniqueName": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj",
         "projectName": "HomeStorage.Api",
-        "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj",
-        "packagesPath": "C:\\Users\\M660779\\.nuget\\packages\\",
-        "outputPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\obj\\",
+        "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\HomeStorage.Api.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Api\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\M660779\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "D:\\LJX\\lib": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj": {
-                "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj"
+              "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj": {
+                "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj"
               },
-              "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj": {
-                "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj"
+              "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj": {
+                "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj"
               }
             }
           }
@@ -45,10 +52,12 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
@@ -85,6 +94,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -93,35 +120,42 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.420/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj": {
+    "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj",
+        "projectUniqueName": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj",
         "projectName": "HomeStorage.Application",
-        "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj",
-        "packagesPath": "C:\\Users\\M660779\\.nuget\\packages\\",
-        "outputPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\obj\\",
+        "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\M660779\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "D:\\LJX\\lib": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj": {
-                "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj"
+              "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj": {
+                "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj"
               }
             }
           }
@@ -135,10 +169,12 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "BCrypt.Net-Next": {
@@ -157,36 +193,57 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.420/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj": {
+    "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj",
+        "projectUniqueName": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj",
         "projectName": "HomeStorage.Domain",
-        "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj",
-        "packagesPath": "C:\\Users\\M660779\\.nuget\\packages\\",
-        "outputPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\obj\\",
+        "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\M660779\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "D:\\LJX\\lib": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {}
           }
@@ -200,10 +257,12 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "imports": [
             "net461",
@@ -216,43 +275,64 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.420/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj": {
+    "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj",
+        "projectUniqueName": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj",
         "projectName": "HomeStorage.Infrastructure",
-        "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\M660779\\.nuget\\packages\\",
-        "outputPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\obj\\",
+        "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\HomeStorage.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\M660779\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "D:\\LJX\\lib": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj": {
-                "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj"
+              "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj": {
+                "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Application\\HomeStorage.Application.csproj"
               },
-              "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj": {
-                "projectPath": "D:\\LJX\\OwnRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj"
+              "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj": {
+                "projectPath": "E:\\CodeRepository\\HomeStorageSystem\\RD\\src\\HomeStorage.Domain\\HomeStorage.Domain.csproj"
               }
             }
           }
@@ -266,10 +346,12 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "EFCore.NamingConventions": {
@@ -298,6 +380,20 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.30, 8.0.30]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -306,7 +402,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.420/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
