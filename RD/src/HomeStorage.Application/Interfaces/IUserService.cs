@@ -15,10 +15,19 @@ public interface IUserService
 
     // 更新用户信息（如果用户不存在返回 null）
     Task<UserResponseDto?> UpdateUserInfoAsync(int id, UpdateUserInfoDto dto);
+    
+    // 更新用户信息（如果用户不存在返回 null）
+    Task<UserResponseDto?> UpdateUserRoleAsync(int id, UpdateUserRoleDto dto);
 
     // 修改用户密码（如果用户不存在返回 null）
     Task ChangePasswordAsync(int id, ChangePasswordDto dto);
 
     // 删除用户（成功返回 true，不存在返回 false）
     Task<bool> DeleteUserAsync(int id);
+
+    Task<bool> UpdateRolePermissionsAsync(int id, List<int> permissionIds);
+
+    Task<bool> UpdateRoleCategoriesAsync(int id, List<int> categoryIds);
+    
+    Task<bool> UpdateRoleLocationsAsync(int id, List<int> locationIds);
 }

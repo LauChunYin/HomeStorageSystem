@@ -18,7 +18,7 @@ public class CategoryRepository : Repository<Category>, ICategoryRepository
         .FirstOrDefaultAsync(c=>c.Name == name);
     }
 
-    public async Task<IEnumerable<Category>> GetCategoriesByParentIdAsync(int parentId)
+    public async Task<IEnumerable<Category>> GetCategoriesByParentIdAsync(int? parentId)
     {
         return await _context.Categories
         .Include(c=>c.RoleCategories)
@@ -28,8 +28,11 @@ public class CategoryRepository : Repository<Category>, ICategoryRepository
         .ToListAsync();
     }
 
-    public async Task<bool> SaveChangesAsync()
+    public async Task<Category?> GetCategoryWithDetailsAsync(int id)
     {
-        return await _context.SaveChangesAsync() > 0;
+        return await _context.Categories
+            .Include(c => c.Children)
+            .Include(c => c.Items)
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
 }

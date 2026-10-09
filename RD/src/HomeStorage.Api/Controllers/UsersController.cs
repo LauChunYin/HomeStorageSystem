@@ -80,6 +80,19 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
+    //仅用户本人可以用
+    // 5. PUT: /api/users/id/Role (修改用户信息)
+    //返回：204
+    [HttpPut("{id:int}/Role")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleDto dto)
+    {
+        if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
+
+        await _userService.UpdateUserRoleAsync(id, dto);
+        return NoContent();
+    }
+
     // 6. PUT: /api/users/id/Password (修改用户密码)
     //返回：204
     [HttpPut("{id:int}/Password")]
@@ -89,6 +102,51 @@ public class UsersController : ControllerBase
         
         await _userService.ChangePasswordAsync(id, dto);
         return NoContent();
+    }
+
+    /// <summary>
+    /// 为指定角色分配/更新功能权限点（仅限管理员）
+    /// </summary>
+    /// <param name="roleId">角色 ID</param>
+    /// <param name="dto">选中的权限 ID 列表</param>
+    [HttpPut("roles/{roleId:int}/permissions")]
+    [Authorize(Roles = "Admin")] // 核心防线：只有系统管理员有权调整权限
+    public async Task<IActionResult> UpdateRolePermissions(
+        [FromRoute] int roleId, 
+        [FromBody] UpdateRolePermissionsDto dto)
+    {
+        await _userService.UpdateRolePermissionsAsync(roleId, dto.PermissionIds);
+        return NoContent(); // 204 修改成功，无需返回 Body
+    }
+
+    /// <summary>
+    /// 为指定角色分配/更新数据品类授权范围（仅限管理员）
+    /// </summary>
+    /// <param name="roleId">角色 ID</param>
+    /// <param name="dto">选中的品类 ID 列表</param>
+    [HttpPut("roles/{roleId:int}/categories")]
+    [Authorize(Roles = "Admin")] // 核心防线：只有系统管理员有权调整数据权限
+    public async Task<IActionResult> UpdateRoleCategories(
+        [FromRoute] int roleId, 
+        [FromBody] UpdateRoleCategoriesDto dto)
+    {
+        await _userService.UpdateRoleCategoriesAsync(roleId, dto.CategoryIds);
+        return NoContent(); // 204 修改成功，无需返回 Body
+    }
+
+    /// <summary>
+    /// 为指定角色分配/更新数据品类授权范围（仅限管理员）
+    /// </summary>
+    /// <param name="roleId">角色 ID</param>
+    /// <param name="dto">选中的品类 ID 列表</param>
+    [HttpPut("roles/{roleId:int}/locations")]
+    [Authorize(Roles = "Admin")] // 核心防线：只有系统管理员有权调整数据权限
+    public async Task<IActionResult> UpdateRoleLocations(
+        [FromRoute] int roleId, 
+        [FromBody] UpdateRoleLocationsDto dto)
+    {
+        await _userService.UpdateRoleLocationsAsync(roleId, dto.LocationIds);
+        return NoContent(); // 204 修改成功，无需返回 Body
     }
 
     // 辅助校验：判断是否为本人或管理员

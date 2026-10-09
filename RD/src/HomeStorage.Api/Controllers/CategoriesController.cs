@@ -37,7 +37,7 @@ public class CategoriesController : ControllerBase
     public async Task<ActionResult<CategoryResponseDto>> CreateCategory([FromBody] CreateCategoryDto dto)
     {
         var category = await _categoryService.CreateCategoryAsync(dto);
-        return CreatedAtAction(nameof(GetCategorybyName), new { userName = category.Name }, category);
+        return CreatedAtAction(nameof(GetCategorybyName), new { name = category.Name }, category);
     }
 
     // 3. DELETE: /api/categories/id (删除品类)
@@ -66,17 +66,7 @@ public class CategoriesController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateCategoryInfo(int id, [FromBody] UpdateCategoryDto dto)
     {
-        if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
-
         await _categoryService.UpdateCategoryAsync(id, dto);
         return NoContent();
-    }
-    
-    // 辅助校验：判断是否为本人或管理员
-    private bool IsOwnerOrAdmin(int targetUserId)
-    {
-        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == targetUserId) 
-               || User.IsInRole("Admin");
     }
 }

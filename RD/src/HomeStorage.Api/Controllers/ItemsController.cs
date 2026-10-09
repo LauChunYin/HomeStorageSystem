@@ -75,11 +75,22 @@ public class ItemsController : ControllerBase
         return NoContent(); // 返回 204 无内容
     }
 
-    // 辅助校验：判断是否为本人或管理员
-    private bool IsOwnerOrAdmin(int targetUserId)
+    // 7. PUT: /api/items/5/StockIn (物品入库)
+    [HttpPut("{id:int}/StockIn")]
+    [Authorize]
+    public async Task<ActionResult<ItemResponseDto>> StockIn(int id, [FromBody] MoveItemDto dto)
     {
-        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == targetUserId)
-               || User.IsInRole("Admin");
+        var updatedItem = await _itemService.StockInAsync(id, dto);
+        if (updatedItem == null) return NotFound(new { message = $"未找到 ID 为 {id} 的物品，入库失败" });
+        return Ok(updatedItem);
+    }
+
+    [HttpPut("{id:int}/StockOut")]
+    [Authorize]
+    public async Task<ActionResult<ItemResponseDto>> StockOut(int id, [FromBody] MoveItemDto dto)
+    {
+        var updatedItem = await _itemService.StockOutAsync(id, dto);
+        if (updatedItem == null) return NotFound(new { message = $"未找到 ID 为 {id} 的物品，出库失败" });
+        return Ok(updatedItem);
     }
 }

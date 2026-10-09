@@ -22,10 +22,10 @@ public class Location
     public static Location Create(string name, int? parentId)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("品类名不能为空", nameof(name));
+            throw new ArgumentException("位置名不能为空", nameof(name));
 
-        if (parentId < 0)
-            throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于等于 0");
+        if (parentId.HasValue && parentId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(parentId), "父位置 ID 必须大于等于 0");
 
         return new Location
         {
@@ -37,10 +37,10 @@ public class Location
     public void Update(string name, int? parentId)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("品类名不能为空", nameof(name));
+            throw new ArgumentException("位置名不能为空", nameof(name));
 
-        if (parentId < 0)
-            throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于等于 0");
+        if (parentId.HasValue && parentId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(parentId), "父位置 ID 必须大于等于 0");
 
         Name = name;
         ParentId = parentId;

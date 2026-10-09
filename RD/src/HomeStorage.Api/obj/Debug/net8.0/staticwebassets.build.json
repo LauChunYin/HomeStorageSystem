@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"ng7u69WhG/kZ+ELkNGu3q13lmqLw5xF1O9v34VVTFi0=","Source":"HomeStorage.Api","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "mfLKcslJMU/xfHb1uMPP3rpH4YMkC3SB7gJOvUpWO0I=",
+  "Source": "HomeStorage.Api",
+  "BasePath": "_content/HomeStorage.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -23,7 +23,7 @@ public class Category
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("品类名不能为空", nameof(name));
 
-        if (parentId < 0)
+        if (parentId.HasValue && parentId <= 0)
             throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于等于 0");
 
         return new Category
@@ -33,12 +33,12 @@ public class Category
         };
     }
 
-    public void Update(string name, int parentId)
+    public void Update(string name, int? parentId)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("品类名不能为空", nameof(name));
 
-        if (parentId < 0)
+        if (parentId.HasValue && parentId <= 0)
             throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于等于 0");
 
         Name = name;

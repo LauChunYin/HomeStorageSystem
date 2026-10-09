@@ -21,7 +21,7 @@ public class LocationsController : ControllerBase
 
     //管理员权限可用
     // 1. GET: /api/locations (获取所有位置信息)
-    // 返回 200 + 品类信息
+    // 返回 200 + 位置信息
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<LocationResponseDto>>> GetAllLocations()
@@ -56,7 +56,6 @@ public class LocationsController : ControllerBase
     [Authorize]
     public async Task<ActionResult<LocationResponseDto>> GetLocationbyName(string name)
     {
-
         var location = await _locationService.GetLocationByNameAsync(name);
         return Ok(location);
     }
@@ -66,17 +65,7 @@ public class LocationsController : ControllerBase
     [HttpPut("{id:int}/profile")]
     public async Task<IActionResult> UpdateLocationInfo(int id, [FromBody] UpdateLocationDto dto)
     {
-        if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
-
         await _locationService.UpdateLocationAsync(id, dto);
         return NoContent();
-    }
-    
-    // 辅助校验：判断是否为本人或管理员
-    private bool IsOwnerOrAdmin(int targetUserId)
-    {
-        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == targetUserId) 
-               || User.IsInRole("Admin");
     }
 }

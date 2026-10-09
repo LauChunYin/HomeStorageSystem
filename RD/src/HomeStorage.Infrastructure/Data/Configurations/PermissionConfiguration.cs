@@ -16,6 +16,9 @@ public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
             .IsRequired()
             .HasMaxLength(100);
             
+        builder.HasIndex(e => e.PermissionCode)
+            .IsUnique();
+            
         builder.Property(e => e.Description)
             .IsRequired()
             .HasMaxLength(100);

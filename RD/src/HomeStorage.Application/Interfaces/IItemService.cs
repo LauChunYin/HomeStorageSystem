@@ -18,6 +18,11 @@ public interface IItemService
 
     // 更新已有物品（如果物品不存在返回 null）
     Task<ItemResponseDto?> UpdateItemAsync(int id, UpdateItemDto dto);
+    
+    // 更新已有物品（如果物品不存在返回 null）
+    Task<ItemResponseDto?> StockInAsync(int id, MoveItemDto dto);
+    
+    Task<ItemResponseDto?> StockOutAsync(int id, MoveItemDto dto);
 
     // 删除物品（成功返回 true，不存在返回 false）
     Task<bool> DeleteItemAsync(int id);

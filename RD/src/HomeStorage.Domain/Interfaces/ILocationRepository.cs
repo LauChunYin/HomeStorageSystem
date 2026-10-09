@@ -5,6 +5,7 @@ namespace HomeStorage.Domain.Interfaces;
 public interface ILocationRepository : IRepository<Location>
 {
     Task<Location?> GetLocationByNameAsync(string name);
-    Task<IEnumerable<Location>> GetLocationsByParentIdAsync(int parentId);
-    Task<bool> SaveChangesAsync();
+    Task<IEnumerable<Location>> GetLocationsByParentIdAsync(int? parentId);
+
+    Task<Location?> GetLocationWithDetailsAsync(int id);
 }

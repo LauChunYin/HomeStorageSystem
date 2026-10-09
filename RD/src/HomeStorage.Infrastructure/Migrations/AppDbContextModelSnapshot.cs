@@ -33,7 +33,8 @@ namespace HomeStorage.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
                     b.Property<int?>("ParentId")
@@ -41,12 +42,15 @@ namespace HomeStorage.Infrastructure.Migrations
                         .HasColumnName("parent_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_category");
+                        .HasName("pk_categories");
+
+                    b.HasIndex("Name")
+                        .HasDatabaseName("ix_categories_name");
 
                     b.HasIndex("ParentId")
-                        .HasDatabaseName("ix_category_parent_id");
+                        .HasDatabaseName("ix_categories_parent_id");
 
-                    b.ToTable("category", (string)null);
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("HomeStorage.Domain.Entities.Item", b =>
@@ -62,10 +66,6 @@ namespace HomeStorage.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("category_id");
 
-                    b.Property<int?>("CategoryId1")
-                        .HasColumnType("integer")
-                        .HasColumnName("category_id1");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -79,10 +79,6 @@ namespace HomeStorage.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("location_id");
 
-                    b.Property<int?>("LocationId1")
-                        .HasColumnType("integer")
-                        .HasColumnName("location_id1");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -92,6 +88,12 @@ namespace HomeStorage.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasColumnName("quantity");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -103,14 +105,8 @@ namespace HomeStorage.Infrastructure.Migrations
                     b.HasIndex("CategoryId")
                         .HasDatabaseName("ix_items_category_id");
 
-                    b.HasIndex("CategoryId1")
-                        .HasDatabaseName("ix_items_category_id1");
-
                     b.HasIndex("LocationId")
                         .HasDatabaseName("ix_items_location_id");
-
-                    b.HasIndex("LocationId1")
-                        .HasDatabaseName("ix_items_location_id1");
 
                     b.ToTable("Items", (string)null);
                 });
@@ -125,18 +121,30 @@ namespace HomeStorage.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
                         .HasColumnName("image_url");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.HasKey("Id")
-                        .HasName("pk_location");
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer")
+                        .HasColumnName("parent_id");
 
-                    b.ToTable("location", (string)null);
+                    b.HasKey("Id")
+                        .HasName("pk_locations");
+
+                    b.HasIndex("Name")
+                        .HasDatabaseName("ix_locations_name");
+
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("ix_locations_parent_id");
+
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("HomeStorage.Domain.Entities.Permission", b =>
@@ -162,6 +170,10 @@ namespace HomeStorage.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_permissions");
+
+                    b.HasIndex("PermissionCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_permissions_permission_code");
 
                     b.ToTable("Permissions", (string)null);
                 });
@@ -190,7 +202,49 @@ namespace HomeStorage.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_roles");
 
+                    b.HasIndex("RoleCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_roles_role_code");
+
                     b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("HomeStorage.Domain.Entities.RoleCategory", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_id");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("category_id");
+
+                    b.HasKey("RoleId", "CategoryId")
+                        .HasName("pk_role_categories");
+
+                    b.HasIndex("CategoryId")
+                        .HasDatabaseName("ix_role_categories_category_id");
+
+                    b.ToTable("RoleCategories", (string)null);
+                });
+
+            modelBuilder.Entity("HomeStorage.Domain.Entities.RoleLocation", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_id");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("location_id");
+
+                    b.HasKey("RoleId", "LocationId")
+                        .HasName("pk_role_locations");
+
+                    b.HasIndex("LocationId")
+                        .HasDatabaseName("ix_role_locations_location_id");
+
+                    b.ToTable("RoleLocations", (string)null);
                 });
 
             modelBuilder.Entity("HomeStorage.Domain.Entities.RolePermission", b =>
@@ -260,7 +314,8 @@ namespace HomeStorage.Infrastructure.Migrations
                     b.HasOne("HomeStorage.Domain.Entities.Category", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
-                        .HasConstraintName("fk_category_category_parent_id");
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_categories_categories_parent_id");
 
                     b.Navigation("Parent");
                 });
@@ -268,31 +323,74 @@ namespace HomeStorage.Infrastructure.Migrations
             modelBuilder.Entity("HomeStorage.Domain.Entities.Item", b =>
                 {
                     b.HasOne("HomeStorage.Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Items")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_items_category_category_id");
-
-                    b.HasOne("HomeStorage.Domain.Entities.Category", null)
-                        .WithMany("Items")
-                        .HasForeignKey("CategoryId1")
-                        .HasConstraintName("fk_items_category_category_id1");
+                        .HasConstraintName("fk_items_categories_category_id");
 
                     b.HasOne("HomeStorage.Domain.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_items_location_location_id");
-
-                    b.HasOne("HomeStorage.Domain.Entities.Location", null)
                         .WithMany("Items")
-                        .HasForeignKey("LocationId1")
-                        .HasConstraintName("fk_items_location_location_id1");
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_items_location_location_id");
 
                     b.Navigation("Category");
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("HomeStorage.Domain.Entities.Location", b =>
+                {
+                    b.HasOne("HomeStorage.Domain.Entities.Location", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_locations_locations_parent_id");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("HomeStorage.Domain.Entities.RoleCategory", b =>
+                {
+                    b.HasOne("HomeStorage.Domain.Entities.Category", "Category")
+                        .WithMany("RoleCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_categories_categories_category_id");
+
+                    b.HasOne("HomeStorage.Domain.Entities.Role", "Role")
+                        .WithMany("RoleCategories")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_categories_role_role_id");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("HomeStorage.Domain.Entities.RoleLocation", b =>
+                {
+                    b.HasOne("HomeStorage.Domain.Entities.Location", "Location")
+                        .WithMany("RoleLocations")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_locations_locations_location_id");
+
+                    b.HasOne("HomeStorage.Domain.Entities.Role", "Role")
+                        .WithMany("RoleLocations")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_locations_roles_role_id");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("HomeStorage.Domain.Entities.RolePermission", b =>
@@ -333,11 +431,17 @@ namespace HomeStorage.Infrastructure.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("Items");
+
+                    b.Navigation("RoleCategories");
                 });
 
             modelBuilder.Entity("HomeStorage.Domain.Entities.Location", b =>
                 {
+                    b.Navigation("Children");
+
                     b.Navigation("Items");
+
+                    b.Navigation("RoleLocations");
                 });
 
             modelBuilder.Entity("HomeStorage.Domain.Entities.Permission", b =>
@@ -347,6 +451,10 @@ namespace HomeStorage.Infrastructure.Migrations
 
             modelBuilder.Entity("HomeStorage.Domain.Entities.Role", b =>
                 {
+                    b.Navigation("RoleCategories");
+
+                    b.Navigation("RoleLocations");
+
                     b.Navigation("RolePermissions");
 
                     b.Navigation("Users");

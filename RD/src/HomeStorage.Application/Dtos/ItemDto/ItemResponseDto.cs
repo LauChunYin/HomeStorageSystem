@@ -13,8 +13,11 @@ public class ItemResponseDto
     public int? LocationId {get;set;}
     public string? LocationName { get; set; }
 
-    public int Quantity { get; set; }
     public string? ImageUrl { get; set; }
+    
+    public int Quantity { get; set; }
+    public ItemStatus Status{get;set;} = ItemStatus.InStock;
+    
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

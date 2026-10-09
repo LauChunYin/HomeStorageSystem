@@ -16,13 +16,13 @@ public class User
 
     private User() { }
 
-    public static User Create(string userName, string password, int roleId, string? imageUrl = null)
+    public static User Create(string userName, string newPasswordHash, int roleId, string? imageUrl = null)
     {
         if (string.IsNullOrWhiteSpace(userName))
             throw new ArgumentException("用户名不能为空", nameof(userName));
 
-        if (string.IsNullOrWhiteSpace(password))
-            throw new ArgumentException("密码不能为空", nameof(password));
+        if (string.IsNullOrWhiteSpace(newPasswordHash))
+            throw new ArgumentException("密码不能为空", nameof(newPasswordHash));
 
         if (roleId <= 0)
             throw new ArgumentOutOfRangeException(nameof(roleId), "角色分类 ID 必须大于 0");
@@ -30,27 +30,27 @@ public class User
         return new User
         {
             UserName = userName.Trim(),
-            Password = password, // 实际业务中存储 Hash 校验值
+            Password = newPasswordHash, // 实际业务中存储 Hash 校验值
             RoleId = roleId,
             ImageUrl = imageUrl
         };
     }
 
-    public void UpdateUserInfo(string userName, int roleId, string? imageUrl = null)
+    public void UpdateUserInfo(string userName, string? imageUrl = null)
     {
         if (string.IsNullOrWhiteSpace(userName))
             throw new ArgumentException("用户名不能为空", nameof(userName));
 
+        UserName = userName;
+        ImageUrl = imageUrl;
+    }
+
+    public void UpdateUserRole(int roleId)
+    {
         if (roleId <= 0)
             throw new ArgumentOutOfRangeException(nameof(roleId), "角色分类 ID 必须大于 0");
 
-        UserName = userName;
         RoleId = roleId;
-
-        if (!string.IsNullOrEmpty(imageUrl))
-        {
-            ImageUrl = imageUrl;
-        }
     }
 
     public void ChangePassword(string newPasswordHash)

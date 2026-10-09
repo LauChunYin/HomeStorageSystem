@@ -16,8 +16,5 @@ public class UpdateItemDto
     [MaxLength(100, ErrorMessage = "存放位置长度不能超过100个字符")]
     public int? LocationId { get; set; }
 
-    [Range(0, int.MaxValue, ErrorMessage = "库存数量不能为负数")]
-    public int Quantity { get; set; }
-
     public string? ImageUrl { get; set; }
 }

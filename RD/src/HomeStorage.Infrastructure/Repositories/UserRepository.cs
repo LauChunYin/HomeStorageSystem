@@ -38,9 +38,4 @@ public class UserRepository : Repository<User>, IUserRepository
                     .ThenInclude(rp => rp.Permission)
             .ToListAsync();
     }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
 }

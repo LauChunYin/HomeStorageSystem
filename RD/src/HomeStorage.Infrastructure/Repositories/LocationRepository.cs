@@ -14,22 +14,25 @@ public class LocationRepository : Repository<Location>, ILocationRepository
     {
         return await _context.Locations
         .Include(l=>l.RoleLocations)
-            .ThenInclude(lt=>lt.RoleId)
+            .ThenInclude(lt=>lt.Role)
             .FirstOrDefaultAsync(u=>u.Name == name);
     }
 
-    public async Task<IEnumerable<Location>> GetLocationsByParentIdAsync(int parentId)
+    public async Task<IEnumerable<Location>> GetLocationsByParentIdAsync(int? parentId)
     {
         return await _context.Locations
         .Include(l=>l.RoleLocations)
-            .ThenInclude(lt=>lt.RoleId)
+            .ThenInclude(lt=>lt.Role)
         .Where(u=>u.ParentId == parentId)
         .AsNoTracking()
         .ToListAsync();
     }
 
-    public async Task<bool> SaveChangesAsync()
+    public async Task<Location?> GetLocationWithDetailsAsync(int id)
     {
-        return await _context.SaveChangesAsync() > 0;
+        return await _context.Locations
+            .Include(c => c.Children)
+            .Include(c => c.Items)
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
 }

@@ -48,6 +48,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 
+// 3. 注册工作单元（Scoped）
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 // 告诉系统：当有人要 IItemService 时，给它 new 一个 ItemService
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IUserService, UserService>();

@@ -16,6 +16,10 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(i => i.Status)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         builder.Property(e => e.ImageUrl)
             .HasMaxLength(500);
 
@@ -29,7 +33,7 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
         builder.HasOne(e => e.Location)
             .WithMany(l => l.Items)
             .HasForeignKey(e => e.LocationId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // 为外键建立索引提升查询效率
         builder.HasIndex(e => e.CategoryId);

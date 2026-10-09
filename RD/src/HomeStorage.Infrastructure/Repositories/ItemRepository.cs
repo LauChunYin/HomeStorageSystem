@@ -36,9 +36,4 @@ public class ItemRepository : Repository<Item>, IItemRepository
             .Include(i => i.Location)
             .FirstOrDefaultAsync(u => u.Id == id);
     }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
 }
