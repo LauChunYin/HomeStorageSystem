@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using HomeStorage.Domain.Exceptions;
 
 namespace HomeStorage.Api.Middlewares;
 
@@ -35,7 +36,7 @@ public class ExceptionHandlingMiddleware
 
             // 数据未找到返回 404 Not Found
             KeyNotFoundException ex => (HttpStatusCode.NotFound, ex.Message),
-            
+
             // 4. 越权操作 -> 403
             UnauthorizedAccessException ex => (HttpStatusCode.Forbidden, "您无权操作该资源"),
 

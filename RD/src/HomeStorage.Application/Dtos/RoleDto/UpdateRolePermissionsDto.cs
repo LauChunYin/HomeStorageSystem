@@ -5,5 +5,5 @@ namespace HomeStorage.Application.Dtos;
 
 public record UpdateRolePermissionsDto
 {
-    public List<int> PermissionIds;
+    public List<int> PermissionIds { get; set; } = new();
 }

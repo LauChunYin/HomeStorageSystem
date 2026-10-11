@@ -2,6 +2,7 @@ using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
 using HomeStorage.Domain.Entities;
 using HomeStorage.Domain.Interfaces;
+using HomeStorage.Domain.Exceptions;
 
 namespace HomeStorage.Application.Services;
 
@@ -13,7 +14,7 @@ public class CategoryService : ICategoryService
     {
         _unitOfWork = unitOfWork;
     }
-    
+
     // 获取所有品类信息
     public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync()
     {
@@ -39,14 +40,14 @@ public class CategoryService : ICategoryService
     public async Task<CategoryResponseDto?> GetCategoryByNameAsync(string name)
     {
         var category = await _unitOfWork.Categories.GetCategoryByNameAsync(name);
-        return category == null ? null :MapToResponseDto(category);
+        return category == null ? null : MapToResponseDto(category);
     }
 
     // 创建信品类
     public async Task<CategoryResponseDto> CreateCategoryAsync(CreateCategoryDto dto)
     {
         var existingCategory = await _unitOfWork.Categories.GetCategoryByNameAsync(dto.Name);
-        if(existingCategory is not null)
+        if (existingCategory is not null)
             throw new BusinessException("品类名已使用，请更换其它品类名");
 
         // 使用 BCrypt 加密

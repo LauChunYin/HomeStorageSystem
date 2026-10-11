@@ -2,6 +2,7 @@ using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
 using HomeStorage.Domain.Entities;
 using HomeStorage.Domain.Interfaces;
+using HomeStorage.Domain.Exceptions;
 
 namespace HomeStorage.Application.Services;
 
@@ -14,7 +15,7 @@ public class UserService : IUserService
     {
         _unitOfWork = unitOfWork;
     }
-    
+
     // 获取所有用户信息
     public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
     {
@@ -27,14 +28,14 @@ public class UserService : IUserService
     public async Task<UserResponseDto?> GetUserByUserNameAsync(string userName)
     {
         var user = await _unitOfWork.Users.GetUserByNameAsync(userName);
-        return user == null ? null :MapToResponseDto(user);
+        return user == null ? null : MapToResponseDto(user);
     }
 
     // 创建新用户
     public async Task<UserResponseDto> CreateUserAsync(CreateUserDto dto)
     {
         var existingUser = await _unitOfWork.Users.GetUserByNameAsync(dto.UserName);
-        if(existingUser is not null)
+        if (existingUser is not null)
             throw new BusinessException("用户名已使用，请更换其它用户名");
 
         // 使用 BCrypt 加密
@@ -100,11 +101,11 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateRolePermissionsAsync(int id, List<int> permissionIds)
     {
-        var role = await _unitOfWork.Roles.GetRolePermissionsAsyns(id)
+        var role = await _unitOfWork.Roles.GetRoleWithPermissionsAsyns(id)
             ?? throw new KeyNotFoundException("角色不存在，请检查");
 
-        _unitOfWork.Roles.UpdateRolePermissionsAsyns(role, permissionIds);
-        
+        _unitOfWork.Roles.UpdateRolePermissions(role, permissionIds);
+
         // ④ 提交保存落盘
         await _unitOfWork.SaveChangesAsync();
         return true;
@@ -112,22 +113,22 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateRoleCategoriesAsync(int id, List<int> categoryIds)
     {
-        var role = await _unitOfWork.Roles.GetRoleCategoriesAsyns(id)
+        var role = await _unitOfWork.Roles.GetRoleWithCategoriesAsyns(id)
             ?? throw new KeyNotFoundException("角色不存在，请检查");
 
-        _unitOfWork.Roles.UpdateRoleCategoriesAsyns(role, categoryIds);
-        
+        _unitOfWork.Roles.UpdateRoleCategories(role, categoryIds);
+
         await _unitOfWork.SaveChangesAsync();
         return true;
     }
-    
+
     public async Task<bool> UpdateRoleLocationsAsync(int id, List<int> locationIds)
     {
-        var role = await _unitOfWork.Roles.GetRoleLocationsAsyns(id)
+        var role = await _unitOfWork.Roles.GetRoleWithLocationsAsyns(id)
             ?? throw new KeyNotFoundException("角色不存在，请检查");
 
-        _unitOfWork.Roles.UpdateRoleLocationsAsyns(role, locationIds);
-        
+        _unitOfWork.Roles.UpdateRoleLocations(role, locationIds);
+
         await _unitOfWork.SaveChangesAsync();
         return true;
     }

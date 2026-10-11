@@ -4,5 +4,5 @@ namespace HomeStorage.Application.Dtos;
 
 public record UpdateRoleCategoriesDto
 {
-    public List<int> CategoryIds;
+    public List<int> CategoryIds { get; set; } = new();
 }

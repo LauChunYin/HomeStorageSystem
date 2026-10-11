@@ -9,28 +9,28 @@ public class RoleRepository : Repository<Role>, IRoleRepository
 {
     public RoleRepository(AppDbContext context) : base(context) { }
 
-    public async Task<Role?> GetRolePermissionsAsyns(int roleId)
+    public async Task<Role?> GetRoleWithPermissionsAsyns(int roleId)
     {
         return await _context.Roles
             .Include(r => r.RolePermissions)
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 
-    public async Task<Role?> GetRoleCategoriesAsyns(int roleId)
+    public async Task<Role?> GetRoleWithCategoriesAsyns(int roleId)
     {
         return await _context.Roles
             .Include(r => r.RoleCategories)
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 
-    public async Task<Role?> GetRoleLocationsAsyns(int roleId)
+    public async Task<Role?> GetRoleWithLocationsAsyns(int roleId)
     {
         return await _context.Roles
             .Include(r => r.RoleLocations)
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 
-    public void UpdateRolePermissionsAsyns(Role role, List<int> permissionIds)
+    public void UpdateRolePermissions(Role role, List<int> permissionIds)
     {
         _context.RolePermissions.RemoveRange(role.RolePermissions);
 
@@ -44,7 +44,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
         }
     }
 
-    public void UpdateRoleCategoriessAsyns(Role role, List<int> categoryIds)
+    public void UpdateRoleCategories(Role role, List<int> categoryIds)
     {
         _context.RoleCategories.RemoveRange(role.RoleCategories);
 
@@ -58,7 +58,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
         }
     }
 
-    public void UpdateRoleLocationsAsyns(Role role, List<int> locationIds)
+    public void UpdateRoleLocations(Role role, List<int> locationIds)
     {
         _context.RoleLocations.RemoveRange(role.RoleLocations);
 

@@ -2,6 +2,7 @@ using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
 using HomeStorage.Domain.Entities;
 using HomeStorage.Domain.Interfaces;
+using HomeStorage.Domain.Exceptions;
 
 namespace HomeStorage.Application.Services;
 
@@ -14,7 +15,7 @@ public class LocationService : ILocationService
     {
         _unitOfWork = unitOfWork;
     }
-    
+
     // 获取所有位置信息
     public async Task<IEnumerable<LocationResponseDto>> GetAllLocationsAsync()
     {
@@ -41,14 +42,14 @@ public class LocationService : ILocationService
     public async Task<LocationResponseDto?> GetLocationByNameAsync(string name)
     {
         var location = await _unitOfWork.Locations.GetLocationByNameAsync(name);
-        return location == null ? null :MapToResponseDto(location);
+        return location == null ? null : MapToResponseDto(location);
     }
 
     // 创建位置
     public async Task<LocationResponseDto> CreateLocationAsync(CreateLocationDto dto)
     {
         var existingLocation = await _unitOfWork.Locations.GetLocationByNameAsync(dto.Name);
-        if(existingLocation is not null)
+        if (existingLocation is not null)
             throw new BusinessException("位置名已使用，请更换其它位置名");
 
         // 使用 BCrypt 加密

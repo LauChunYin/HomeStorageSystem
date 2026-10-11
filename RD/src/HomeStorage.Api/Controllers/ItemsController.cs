@@ -74,23 +74,4 @@ public class ItemsController : ControllerBase
         if (!success) return NotFound(new { message = $"未找到 ID 为 {id} 的物品" });
         return NoContent(); // 返回 204 无内容
     }
-
-    // 7. PUT: /api/items/5/StockIn (物品入库)
-    [HttpPut("{id:int}/StockIn")]
-    [Authorize]
-    public async Task<ActionResult<ItemResponseDto>> StockIn(int id, [FromBody] MoveItemDto dto)
-    {
-        var updatedItem = await _itemService.StockInAsync(id, dto);
-        if (updatedItem == null) return NotFound(new { message = $"未找到 ID 为 {id} 的物品，入库失败" });
-        return Ok(updatedItem);
-    }
-
-    [HttpPut("{id:int}/StockOut")]
-    [Authorize]
-    public async Task<ActionResult<ItemResponseDto>> StockOut(int id, [FromBody] MoveItemDto dto)
-    {
-        var updatedItem = await _itemService.StockOutAsync(id, dto);
-        if (updatedItem == null) return NotFound(new { message = $"未找到 ID 为 {id} 的物品，出库失败" });
-        return Ok(updatedItem);
-    }
 }

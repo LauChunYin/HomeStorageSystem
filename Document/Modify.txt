@@ -1,0 +1,431 @@
+P1-1 Item.StockOut 无下限检查
+文件：src/HomeStorage.Domain/Entities/Item.cs
+问题：出库数量大于库存时会变成负数。
+修改：
+
+csharp
+public void StockOut(int quantity)
+{
+    if (quantity <= 0)
+        throw new ArgumentException("出库数量必须大于 0", nameof(quantity));
+    if (quantity > Quantity)
+        throw new BusinessException("出库数量不能超过当前库存");
+
+    Quantity -= quantity;
+    Status = Quantity > 0 ? ItemStatus.InStock : ItemStatus.OutStock;
+    UpdatedAt = DateTime.UtcNow;
+}
+P1-2 Item.UpdateInfo / Item.Create 未校验 LocationId
+文件：src/HomeStorage.Domain/Entities/Item.cs
+修改：两个方法里加
+
+csharp
+if (locationId.HasValue && locationId <= 0)
+    throw new ArgumentException("位置 ID 必须大于 0", nameof(locationId));
+P1-3 Category.Update / Location.Update 没 Trim()
+文件：Category.cs、Location.cs
+问题：Create 里 Name = name.Trim()，Update 里 Name = name; 不一致。
+修改：两处改为 Name = name.Trim();
+
+P1-4 ParentId 校验文案错误
+文件：Category.cs、Location.cs
+问题：判断是 parentId <= 0 抛，说明允许 > 0 或 null，文案写成"必须大于等于 0"。
+修改：文案改为"父 ID 必须大于 0"。
+
+P1-5 ItemService.MapToResponseDto 丢 Status
+文件：src/HomeStorage.Application/Services/ItemService.cs
+修改：
+
+csharp
+return new ItemResponseDto
+{
+    ...
+    Status = item.Status,
+    ...
+};
+P1-6 父节点查询传 0 而非 null
+文件：CategoryService.cs、LocationService.cs
+问题：GetCategoriesByParentIdAsync(0) 查不到根节点，因为根节点的 ParentId 是 null。
+修改：
+
+csharp
+var categories = await _unitOfWork.Categories.GetCategoriesByParentIdAsync(null);
+LocationService 同理。
+
+P1-7 CategoryResponseDto / LocationResponseDto 的 ParentId 映射强转 0
+文件：CategoryService.cs、LocationService.cs
+问题：ParentId = category.Parent?.Id ?? 0 把 null 语义丢了。
+修改：
+
+csharp
+ParentId = category.ParentId,
+ParentName = category.Parent?.Name,
+P1-8 RoleRepository.GetRole* 缺 ThenInclude(rp => rp.Permission)
+文件：RoleRepository.cs
+问题：GetRolePermissionsAsyns 只 Include 了 RolePermissions，没 ThenInclude Permission。如果 Service 里读 PermissionCode，会拿到 null。
+修改：
+
+csharp
+.Include(r => r.RolePermissions)
+    .ThenInclude(rp => rp.Permission)
+P1-9 UnitOfWork.Dispose() 是空的
+文件：src/HomeStorage.Infrastructure/Repositories/UnitOfWork.cs
+修改：
+
+csharp
+public void Dispose()
+{
+    _context.Dispose();
+}
+P1-10 UnitOfWork 事务对象未保存
+文件：UnitOfWork.cs
+问题：BeginTransactionAsync / CommitAsync / RollbackAsync 没保存 IDbContextTransaction 对象，嵌套调用会抛异常。
+修改：
+
+csharp
+private IDbContextTransaction? _transaction;
+
+public async Task BeginTransactionAsync()
+{
+    if (_transaction != null) return;
+    _transaction = await _context.Database.BeginTransactionAsync();
+}
+
+public async Task CommitAsync()
+{
+    if (_transaction == null) return;
+    await _transaction.CommitAsync();
+    await _transaction.DisposeAsync();
+    _transaction = null;
+}
+
+public async Task RollbackAsync()
+{
+    if (_transaction == null) return;
+    await _transaction.RollbackAsync();
+    await _transaction.DisposeAsync();
+    _transaction = null;
+}
+并加 using Microsoft.EntityFrameworkCore.Storage;。
+
+P1-11 UpdateItemDto.CategoryId 用了 [MaxLength]
+文件：UpdateItemDto.cs
+问题：MaxLength 只对字符串有效，对 int 无效。
+修改：
+
+csharp
+[Range(1, int.MaxValue, ErrorMessage = "分类不能为空")]
+public int CategoryId { get; set; }
+P1-12 MoveItemDto.Quantity 用 Range(0, ...)
+文件：MoveItemDto.cs
+问题：允许 0，但领域方法要求 > 0。
+修改：
+
+csharp
+[Range(1, int.MaxValue, ErrorMessage = "数量必须大于 0")]
+public int Quantity { get; set; }
+P1-13 UpdateCategoryDto.ParentId 类型不对
+文件：UpdateCategoryDto.cs
+问题：Create 是 int?，Update 是 int，无法清空父节点。
+修改：改成 public int? ParentId { get; set; }
+
+P1-14 UpdateItemAsync 未校验 CategoryId 存在
+文件：ItemService.cs
+问题：传不存在的 CategoryId 会触发外键约束，抛 500。
+修改：在 UpdateItemAsync 里先查品类是否存在：
+
+csharp
+var category = await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId)
+    ?? throw new BusinessException("分类不存在");
+P1-15 CreateItemDto.LocationId 用 [Range] 对 nullable 无效
+文件：CreateItemDto.cs
+问题：Range 作用在 int? 上，值为 null 时会跳过验证，"必须选择位置"的提示没意义。
+修改：如果想强制选位置，改成非 nullable int；如果允许不选，去掉"必须"提示。
+
+P1-16 CategoryService.DeleteCategoryAsync 异常文案错误
+文件：CategoryService.cs
+问题：throw new KeyNotFoundException("用户不存在, 请检查") → 应该是"品类不存在"。
+
+P1-17 CategoryService.CreateCategoryAsync 和 LocationService.CreateLocationAsync 注释复制错误
+文件：两个 Service
+问题：注释写着 // 使用 BCrypt 加密，但品类和位置没有密码。
+
+P2 级：安全 / 权限问题（你这套系统最大的一块）
+P2-1 数据范围过滤完全没做
+涉及：所有 Service 的 GetAll / GetById 查询。
+问题：RoleCategory、RoleLocation 建了，但没有任何查询用它过滤。任何登录用户能看到全表。
+修改方向：
+
+在 Application 层定义 ICurrentUserService 接口：
+
+csharp
+public interface ICurrentUserService
+{
+    int UserId { get; }
+    int RoleId { get; }
+    bool IsAdmin { get; }
+    IReadOnlyCollection<string> Permissions { get; }
+}
+在 Infrastructure 实现，通过 IHttpContextAccessor 从 JWT Claims 读。
+
+Repository 加数据范围参数：
+
+csharp
+Task<IEnumerable<Item>> SearchAsync(
+    IReadOnlyCollection<int>? allowedCategoryIds,
+    IReadOnlyCollection<int>? allowedLocationIds,
+    int? categoryId,
+    int? locationId);
+Service 里：
+
+csharp
+var allowedCategories = currentUser.IsAdmin
+    ? null
+    : await _unitOfWork.Roles.GetAllowedCategoryIdsAsync(currentUser.RoleId);
+var items = await _unitOfWork.Items.SearchAsync(allowedCategories, ...);
+P2-2 操作权限完全没做
+涉及：ItemsController、CategoriesController、LocationsController、UsersController
+问题：Create / Update / Delete 只用 [Authorize] 或直接没有，任何登录用户都能改。
+修改方向：
+
+定义权限常量：
+
+csharp
+public static class PermissionCodes
+{
+    public const string ItemCreate = "item.create";
+    public const string ItemUpdate = "item.update";
+    public const string ItemDelete = "item.delete";
+    public const string CategoryCreate = "category.create";
+    // ...
+}
+实现 PermissionAuthorizationHandler，读 JWT 里的 Permission Claims。
+
+Controller 用 Policy：
+
+csharp
+[Authorize(Policy = PermissionCodes.ItemCreate)]
+public async Task<ActionResult<ItemResponseDto>> Create(...)
+P2-3 [Authorize(Roles = "Admin")] 用法反了
+涉及：CategoriesController、ItemsController、LocationsController 的 GetAll
+问题：登录用户看不到列表，只能靠 GetByName 拿单个。而需求是"根据角色权限看到对应数据"，不是"只有 Admin 才能看全部"。
+修改：去掉 GetAll 上的 [Authorize(Roles = "Admin")]，改为 Service 层做数据范围过滤。
+
+P2-4 CategoriesController.UpdateCategoryInfo 缺 Admin 权限
+文件：CategoriesController.cs
+修改：加 [Authorize(Roles = "Admin")]，或改成权限点方式。
+
+P2-5 LocationsController.UpdateLocationInfo 缺 Admin 权限
+文件：LocationsController.cs
+修改：同上。
+
+P2-6 JWT Secret 兜底值不一致
+涉及：Program.cs 和 AuthController.cs
+问题：Program.cs 里兜底是 "YourSuperSecretKeyHereAtLeast32BytesLong!"，AuthController 里也是同一句。但不应该有兜底值，配置缺失时应直接抛异常。
+修改：
+
+csharp
+var secretKey = jwtSettings["Secret"]
+    ?? throw new InvalidOperationException("未配置 JwtSettings:Secret");
+两处都改。
+
+P2-7 连接字符串无空值检查
+文件：Program.cs
+修改：
+
+csharp
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("未配置 DefaultConnection");
+P2-8 appsettings.json 敏感信息明文
+文件：appsettings.json
+修改：
+
+开发环境用 dotnet user-secrets
+
+生产环境用环境变量
+
+不要把真实密码/JWT Secret 提交到 Git
+
+P2-9 Token 有效期硬编码
+文件：AuthController.cs
+修改：把 AddHours(8) 里的 8 提到配置：
+
+json
+"JwtSettings": {
+    "ExpireHours": 8
+}
+P2-10 LoginDto 缺最大长度
+文件：LoginDto.cs
+修改：给 UserName 加 [MaxLength(100)]，Password 加 [MaxLength(100)]。
+
+P3 级：架构 / 设计问题
+P3-1 关系配置重复
+涉及：
+
+CategoryConfiguration 和 RoleCategoryConfiguration 都配了 Category <-> RoleCategory
+
+LocationConfiguration 和 RoleLocationConfiguration 都配了 Location <-> RoleLocation
+
+LocationConfiguration 和 ItemConfiguration 都配了 Location <-> Item
+修改：只在一处保留，通常放在"从属方"的 Configuration 里。
+
+P3-2 ToTable 与 snake_case 冲突
+涉及：所有 *Configuration.cs
+问题：启用了 UseSnakeCaseNamingConvention()，但又显式 ToTable("Categories")。
+修改：二选一：
+
+去掉 ToTable(...)，让命名约定接管
+
+或显式改成 ToTable("categories")
+
+P3-3 过度 Include
+涉及：CategoryRepository、LocationRepository、UserRepository
+问题：按名字查品类/位置时带出 RoleCategories + Role；查用户列表时带出完整权限树。
+修改：按查询场景拆方法。权限过滤单独查一次并缓存。
+
+P3-4 UserRepository.GetAllAsync 丢 AsNoTracking
+文件：UserRepository.cs
+修改：加 .AsNoTracking()。
+
+P3-5 Repository.FindNoTrackingAsync 不在接口里
+文件：Repository.cs
+修改：二选一：
+
+加到 IRepository<T> 接口
+
+或删掉，把 FindAsync 改成默认 AsNoTracking（因为 GetAllAsync 已经是不跟踪的）
+
+P3-6 缺少 CHECK 约束
+文件：ItemConfiguration.cs
+修改：
+
+csharp
+builder.ToTable(t =>
+{
+    t.HasCheckConstraint("CK_Items_Quantity", "quantity >= 0");
+});
+P3-7 审计字段缺失
+涉及：User、Category、Location、Role
+修改：至少 User 加 CreatedAt。
+
+P3-8 AuthController 直接注入 IUserRepository
+文件：AuthController.cs
+修改：把登录逻辑抽到 IUserService.LoginAsync(LoginDto dto)，返回 AuthResponseDto。
+
+P3-9 Role 相关接口塞在 UsersController
+文件：UsersController.cs
+问题：/api/users/roles/1/permissions 语义奇怪。
+修改：拆出 RolesController，路由 /api/roles/{roleId}/permissions 等。
+
+P3-10 UpdateUserRole 权限判断冗余
+文件：UsersController.cs
+问题：方法上已有 [Authorize(Roles = "Admin")]，里面还调 IsOwnerOrAdmin(id)，普通用户进不来，本人分支永远 false。
+修改：去掉 IsOwnerOrAdmin(id)。
+
+P3-11 Category / Location 属性 public set 不一致
+文件：Category.cs、Location.cs
+问题：Item、User 用 private set + 工厂方法，Category、Location 用 public set。
+修改：统一改成 private set。
+
+P3-12 User.Password 命名有歧义
+文件：User.cs
+修改：改名为 PasswordHash（涉及 Controller、Service、Auth 里所有引用）。
+
+P3-13 Role / Permission 没有工厂方法
+文件：Role.cs、Permission.cs
+修改：风格统一，可以加 Create 静态工厂方法（非必须）。
+
+P3-14 ItemStatus.SoldOut 没有使用场景
+文件：ItemStatus.cs
+修改：二选一：
+
+加领域方法 MarkAsSoldOut()
+
+删掉该枚举值
+
+P3-15 ItemStatus 的 [Description] 没用到
+文件：ItemStatus.cs
+修改：要么删掉，要么前端做映射。
+
+P3-16 Item.Create 硬编码 Quantity = 1
+文件：Item.cs
+修改：如果允许创建时指定初始数量，加参数；否则保持不变，但明确这是设计选择。
+
+P3-17 UpdateRolePermissions 依赖调用方先加载集合
+文件：RoleRepository.cs
+问题：role.RolePermissions 必须已加载，否则 RemoveRange 什么都不删，权限只增不减。
+修改：
+
+在方法上加 XML 注释说明前置条件
+
+或在方法内主动查询一次
+
+P3-18 CategoryService.GetCategoryWithDetailsAsync 命名模糊
+文件：ICategoryRepository.cs
+修改：拆成 GetCategoryWithChildrenAsync / GetCategoryWithItemsAsync。
+
+P3-19 GetItemsByCategoryAndLocationAsync 参数死板
+文件：IItemRepository.cs、IItemService.cs
+修改：改成
+
+csharp
+Task<IEnumerable<Item>> SearchAsync(int? categoryId, int? locationId, string? keyword);
+P4 级：代码质量 / 风格 / 小事
+P4-1 JWT 包版本不一致
+文件：HomeStorage.Api.csproj
+问题：JwtBearer 8.0.0 和 System.IdentityModel.Tokens.Jwt 8.22.0 依赖的 Microsoft.IdentityModel.* 大版本不一致。
+修改：统一版本，或去掉 System.IdentityModel.Tokens.Jwt。
+
+P4-2 异常中间件返回 JSON 命名规范不一致
+文件：ExceptionHandlingMiddleware.cs
+修改：用 context.Response.WriteAsJsonAsync(response) 让 ASP.NET Core 用 camelCase。
+
+P4-3 异常中间件无日志
+文件：ExceptionHandlingMiddleware.cs
+修改：注入 ILogger<ExceptionHandlingMiddleware>，在 catch 里 LogError。
+
+P4-4 Swagger Bearer 建议用 Http 类型
+文件：Program.cs
+修改：
+
+csharp
+Type = SecuritySchemeType.Http,
+Scheme = "bearer",
+BearerFormat = "JWT"
+P4-5 ChagnePasswordDto.cs 文件名拼错
+文件：src/HomeStorage.Application/Dtos/UserDto/ChagnePasswordDto.cs
+修改：改名为 ChangePasswordDto.cs。
+
+P4-6 .gitignore
+问题：HomeStorage.v12.suo、bin/、obj/ 不应提交。
+修改：加 .gitignore。
+
+P4-7 EFCore.Design 在两个项目重复引用
+文件：HomeStorage.Api.csproj、HomeStorage.Infrastructure.csproj
+修改：只在启动项目（Api）引用即可。
+
+P4-8 CreateCategoryDto.ImageUrl 是死字段
+文件：CreateCategoryDto.cs、Category.cs
+修改：要么给 Category 加 ImageUrl 字段和配置，要么从 DTO 删掉。
+
+P4-9 BCrypt 放在 Application 层
+文件：HomeStorage.Application.csproj
+修改：理想做法是定义 IPasswordHasher 接口，实现放 Infrastructure。小项目可以不改。
+
+P4-10 Infrastructure 引用 Microsoft.AspNetCore.App
+文件：HomeStorage.Infrastructure.csproj
+修改：如果只是为了 IHttpContextAccessor，建议改成接口抽象。可以用，但要注意架构。
+
+P4-11 UsersController.CreateUser 里 CreatedAtAction 指向的 GetUserbyName 有权限限制
+问题：Admin 创建用户后返回的 Location 头指向 GetUserbyName，普通用户访问不了。语义上没问题，只是提示。
+
+建议修改顺序
+P0 全部改完（8 条），确保项目能编译通过
+
+P1 全部改完（17 条），确保功能逻辑不出错
+
+P2 的 P2-6、P2-7、P2-8、P2-10 先做（安全基础）
+
+P2-1、P2-2、P2-3、P2-4、P2-5 —— 权限主线的改动（会涉及多个文件），可以放在你"小功能"之前或之后做
+
+P3、P4 慢慢优化

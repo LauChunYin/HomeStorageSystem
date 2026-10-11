@@ -45,6 +45,7 @@ builder.Services.AddAuthentication(options =>
 // 告诉系统：当有人要 IItemRepository 时，给它 new 一个 ItemRepository
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 
@@ -63,7 +64,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "HomeStorage API", Version = "v1" });
-    
+
     // 1. 定义 Bearer Token 头部规则
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

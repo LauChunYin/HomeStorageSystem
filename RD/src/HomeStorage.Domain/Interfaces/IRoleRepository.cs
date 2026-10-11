@@ -4,11 +4,11 @@ namespace HomeStorage.Domain.Interfaces;
 
 public interface IRoleRepository : IRepository<Role>
 {
-    Task<Role?> GetRolePermissionsAsyns(int roleId);
-    Task<Role?> GetRoleCategoriesAsyns(int roleId);
-    Task<Role?> GetRoleLocationsAsyns(int roleId);
+    Task<Role?> GetRoleWithPermissionsAsyns(int roleId);
+    Task<Role?> GetRoleWithCategoriesAsyns(int roleId);
+    Task<Role?> GetRoleWithLocationsAsyns(int roleId);
 
-    void UpdateRolePermissionsAsyns(Role role, List<int> permissionIds);
-    void UpdateRoleCategoriesAsyns(Role role, List<int> categoryIds);
-    void UpdateRoleLocationsAsyns(Role role, List<int> locationIds);
+    void UpdateRolePermissions(Role role, List<int> permissionIds);
+    void UpdateRoleCategories(Role role, List<int> categoryIds);
+    void UpdateRoleLocations(Role role, List<int> locationIds);
 }

@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<RoleCategory> RoleCategories => Set<RoleCategory>();
     public DbSet<RoleLocation> RoleLocations => Set<RoleLocation>();
+    public DbSet<Permission> Permissions => Set<Permission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
