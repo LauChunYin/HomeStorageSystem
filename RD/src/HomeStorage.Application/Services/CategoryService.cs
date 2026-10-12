@@ -50,7 +50,6 @@ public class CategoryService : ICategoryService
         if (existingCategory is not null)
             throw new BusinessException("品类名已使用，请更换其它品类名");
 
-        // 使用 BCrypt 加密
         var category = Category.Create(dto.Name, dto.ParentId);
         await _unitOfWork.Categories.AddAsync(category);
         await _unitOfWork.SaveChangesAsync();
@@ -61,7 +60,7 @@ public class CategoryService : ICategoryService
     public async Task<bool> DeleteCategoryAsync(int id)
     {
         var category = await _unitOfWork.Categories.GetCategoryWithDetailsAsync(id)
-                    ?? throw new KeyNotFoundException("用户不存在, 请检查");
+                    ?? throw new KeyNotFoundException("品类不存在, 请检查");
 
         if (category.Children.Any() || category.Items.Any())
             throw new BusinessException("该分类下存在子分类或物品，无法直接删除");
@@ -95,8 +94,8 @@ public class CategoryService : ICategoryService
         {
             Id = category.Id,
             Name = category.Name,
-            ParentId = category.Parent?.Id ?? 0,
-            ParentName = category.Parent?.Name ?? string.Empty
+            ParentId = category.ParentId,
+            ParentName = category.Parent?.Name
         };
     }
 }

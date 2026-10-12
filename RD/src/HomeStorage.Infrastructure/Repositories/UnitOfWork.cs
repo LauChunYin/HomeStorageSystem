@@ -1,13 +1,15 @@
 using HomeStorage.Domain.Interfaces;
 using HomeStorage.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HomeStorage.Infrastructure.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
+    private IDbContextTransaction? _transaction;
 
-    public IRoleRepository Roles{ get; }
+    public IRoleRepository Roles { get; }
     public IUserRepository Users { get; }
     public IItemRepository Items { get; }
     public ICategoryRepository Categories { get; }
@@ -36,18 +38,28 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task BeginTransactionAsync()
     {
+        if (_transaction != null) return;
         await _context.Database.BeginTransactionAsync();
     }
 
     public async Task CommitAsync()
     {
-        await _context.Database.CommitTransactionAsync();
+        if (_transaction == null) return;
+        await _transaction.CommitAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
     }
 
     public async Task RollbackAsync()
     {
-        await _context.Database.RollbackTransactionAsync();
+        if (_transaction == null) return;
+        await _transaction.RollbackAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
     }
 
-    public void Dispose(){}
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
 }

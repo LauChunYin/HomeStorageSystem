@@ -27,7 +27,7 @@ public class LocationService : ILocationService
     // 获取所有父位置信息
     public async Task<IEnumerable<LocationResponseDto>> GetAllParentLocationsAsync()
     {
-        var locations = await _unitOfWork.Locations.GetLocationsByParentIdAsync(0);
+        var locations = await _unitOfWork.Locations.GetLocationsByParentIdAsync(null);
         return locations.Select(MapToResponseDto);
     }
 
@@ -52,7 +52,6 @@ public class LocationService : ILocationService
         if (existingLocation is not null)
             throw new BusinessException("位置名已使用，请更换其它位置名");
 
-        // 使用 BCrypt 加密
         var location = Location.Create(dto.Name, dto.ParentId);
         await _unitOfWork.Locations.AddAsync(location);
         await _unitOfWork.SaveChangesAsync();
@@ -97,8 +96,8 @@ public class LocationService : ILocationService
         {
             Id = location.Id,
             Name = location.Name,
-            ParentId = location.Parent?.Id ?? 0,
-            ParentName = location.Parent?.Name ?? string.Empty,
+            ParentId = location.ParentId,
+            ParentName = location.Parent?.Name,
             ImageUrl = location.ImageUrl
         };
     }

@@ -1,6 +1,7 @@
 using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
 using HomeStorage.Domain.Entities;
+using HomeStorage.Domain.Exceptions;
 using HomeStorage.Domain.Interfaces;
 
 namespace HomeStorage.Application.Services;
@@ -55,17 +56,20 @@ public class ItemService : IItemService
     // 5. 更新物品
     public async Task<ItemResponseDto?> UpdateItemAsync(int id, UpdateItemDto dto)
     {
-        // ① 先从数据库查出已有的物品实体
+        var category = await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId)
+            ?? throw new BusinessException("分类不存在");
+
+        //先从数据库查出已有的物品实体
         var item = await _unitOfWork.Items.GetByIdAsync(id);
         if (item == null) return null; // 查不到直接返回 null
 
-        // ② 调用实体对象的实例方法 UpdateInfo 修改内部数据
+        //调用实体对象的实例方法 UpdateInfo 修改内部数据
         item.UpdateInfo(dto.Name, dto.CategoryId, dto.LocationId, dto.ImageUrl);
 
-        // ③ 标记为 Update 状态
+        //标记为 Update 状态
         _unitOfWork.Items.Update(item);
 
-        // ④ 提交保存到 PostgreSQL
+        //提交保存到 PostgreSQL
         await _unitOfWork.SaveChangesAsync();
 
         return MapToResponseDto(item);
@@ -76,7 +80,7 @@ public class ItemService : IItemService
         var item = await _unitOfWork.Items.GetByIdAsync(id);
         if (item == null) return null; // 查不到直接返回 null
 
-        item.StockIn(dto.Quantity);
+        item.StockIn(dto.MoveQuantity);
 
         _unitOfWork.Items.Update(item);
         await _unitOfWork.SaveChangesAsync();
@@ -89,7 +93,7 @@ public class ItemService : IItemService
         var item = await _unitOfWork.Items.GetByIdAsync(id);
         if (item == null) return null; // 查不到直接返回 null
 
-        item.StockOut(dto.Quantity);
+        item.StockOut(dto.MoveQuantity);
 
         _unitOfWork.Items.Update(item);
         await _unitOfWork.SaveChangesAsync();
@@ -119,6 +123,7 @@ public class ItemService : IItemService
             LocationId = item.LocationId,
             LocationName = item.Location?.Name,
             Quantity = item.Quantity,
+            Status = item.Status,
             ImageUrl = item.ImageUrl,
             CreatedAt = item.CreatedAt,
             UpdatedAt = item.UpdatedAt

@@ -1,3 +1,6 @@
+using HomeStorage.Domain.Enums;
+using HomeStorage.Domain.Exceptions;
+
 namespace HomeStorage.Domain.Entities;
 
 /// <summary>
@@ -16,7 +19,7 @@ public class Item
 
     public int Quantity { get; private set; }
 
-    public ItemStatus Status {get; private set;}
+    public ItemStatus Status { get; private set; }
 
     public string? ImageUrl { get; private set; }
     public DateTime CreatedAt { get; private set; }
@@ -35,6 +38,9 @@ public class Item
 
         if (categoryId <= 0)
             throw new ArgumentException("物品分类不能为空", nameof(categoryId));
+
+        if (locationId.HasValue && locationId <= 0)
+            throw new ArgumentException("位置 ID 必须大于 0", nameof(locationId));
 
         return new Item
         {
@@ -60,6 +66,9 @@ public class Item
         if (categoryId <= 0)
             throw new ArgumentException("物品分类不能为空", nameof(categoryId));
 
+        if (locationId.HasValue && locationId <= 0)
+            throw new ArgumentException("位置 ID 必须大于 0", nameof(locationId));
+
         Name = name.Trim();
         CategoryId = categoryId;
         LocationId = locationId;
@@ -72,9 +81,9 @@ public class Item
     {
         if (quantity <= 0)
             throw new ArgumentException("入库数量不能少于等于0", nameof(quantity));
-            
+
         Quantity += quantity;
-        Status = Quantity>0?ItemStatus.InStock:ItemStatus.OutStock;
+        Status = Quantity > 0 ? ItemStatus.InStock : ItemStatus.OutStock;
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -83,8 +92,11 @@ public class Item
         if (quantity <= 0)
             throw new ArgumentException("出库数量不能少于等于0", nameof(quantity));
 
+        if (quantity > Quantity)
+            throw new BusinessException("出库数量不能超过当前库存");
+
         Quantity -= quantity;
-        Status = Quantity>0?ItemStatus.InStock:ItemStatus.OutStock;
+        Status = Quantity > 0 ? ItemStatus.InStock : ItemStatus.OutStock;
         UpdatedAt = DateTime.UtcNow;
     }
 }

@@ -5,8 +5,8 @@ public class Category
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
 
-    public int? ParentId{get;set;}
-    public Category? Parent{get;set;}
+    public int? ParentId { get; set; }
+    public Category? Parent { get; set; }
 
     // 容器：一个分类包含多个物品
     public ICollection<Category> Children { get; set; } = new List<Category>();
@@ -24,7 +24,7 @@ public class Category
             throw new ArgumentException("品类名不能为空", nameof(name));
 
         if (parentId.HasValue && parentId <= 0)
-            throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于等于 0");
+            throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于 0");
 
         return new Category
         {
@@ -39,9 +39,9 @@ public class Category
             throw new ArgumentException("品类名不能为空", nameof(name));
 
         if (parentId.HasValue && parentId <= 0)
-            throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于等于 0");
+            throw new ArgumentOutOfRangeException(nameof(parentId), "父品类 ID 必须大于 0");
 
-        Name = name;
+        Name = name.Trim();
         ParentId = parentId;
     }
 }

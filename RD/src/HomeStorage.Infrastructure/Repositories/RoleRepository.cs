@@ -13,6 +13,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
     {
         return await _context.Roles
             .Include(r => r.RolePermissions)
+                .ThenInclude(rp => rp.Permission)
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 
@@ -20,6 +21,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
     {
         return await _context.Roles
             .Include(r => r.RoleCategories)
+                .ThenInclude(rp => rp.Category)
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 
@@ -27,6 +29,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
     {
         return await _context.Roles
             .Include(r => r.RoleLocations)
+                .ThenInclude(rp => rp.Location)
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 

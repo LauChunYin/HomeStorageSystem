@@ -13,7 +13,7 @@ public class CreateItemDto
     public int CategoryId { get; set; }
 
     [Range(1, int.MaxValue, ErrorMessage = "必须选择有效的存放位置")]
-    public int? LocationId { get; set; }
+    public int LocationId { get; set; }
 
     public string? ImageUrl { get; set; }
 }

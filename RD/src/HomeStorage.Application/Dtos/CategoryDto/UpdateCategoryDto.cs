@@ -10,5 +10,5 @@ public class UpdateCategoryDto
 
     public string? ImageUrl { get; set; }
 
-    public int ParentId { get; set; }
+    public int? ParentId { get; set; }
 }

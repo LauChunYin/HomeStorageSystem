@@ -12,7 +12,7 @@ public class User
 
     //外键
     public int RoleId { get; private set; }
-    public Role Role {get; private set;} = null!;
+    public Role Role { get; private set; } = null!;
 
     private User() { }
 
@@ -41,7 +41,7 @@ public class User
         if (string.IsNullOrWhiteSpace(userName))
             throw new ArgumentException("用户名不能为空", nameof(userName));
 
-        UserName = userName;
+        UserName = userName.Trim();
         ImageUrl = imageUrl;
     }
 
