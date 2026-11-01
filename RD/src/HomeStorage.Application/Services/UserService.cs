@@ -101,7 +101,7 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateRolePermissionsAsync(int id, List<int> permissionIds)
     {
-        var role = await _unitOfWork.Roles.GetRoleWithPermissionsAsyns(id)
+        var role = await _unitOfWork.Roles.GetRoleWithPermissionsAsync(id)
             ?? throw new KeyNotFoundException("角色不存在，请检查");
 
         _unitOfWork.Roles.UpdateRolePermissions(role, permissionIds);
@@ -113,7 +113,7 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateRoleCategoriesAsync(int id, List<int> categoryIds)
     {
-        var role = await _unitOfWork.Roles.GetRoleWithCategoriesAsyns(id)
+        var role = await _unitOfWork.Roles.GetRoleWithCategoriesAsync(id)
             ?? throw new KeyNotFoundException("角色不存在，请检查");
 
         _unitOfWork.Roles.UpdateRoleCategories(role, categoryIds);
@@ -124,7 +124,7 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateRoleLocationsAsync(int id, List<int> locationIds)
     {
-        var role = await _unitOfWork.Roles.GetRoleWithLocationsAsyns(id)
+        var role = await _unitOfWork.Roles.GetRoleWithLocationsAsync(id)
             ?? throw new KeyNotFoundException("角色不存在，请检查");
 
         _unitOfWork.Roles.UpdateRoleLocations(role, locationIds);

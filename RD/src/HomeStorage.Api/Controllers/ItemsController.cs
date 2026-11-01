@@ -1,5 +1,6 @@
 using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
+using HomeStorage.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -21,7 +22,6 @@ public class ItemsController : ControllerBase
 
     // 1. GET: /api/items (获取所有物品)
     [HttpGet]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetAll()
     {
         return Ok(await _itemService.GetAllItemsAsync());
@@ -29,7 +29,6 @@ public class ItemsController : ControllerBase
 
     // 2. GET: /api/items/5 (根据 Id 获取单个物品)
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ItemResponseDto>> GetById(int id)
     {
         var item = await _itemService.GetItemByIdAsync(id);
@@ -39,7 +38,6 @@ public class ItemsController : ControllerBase
 
     // 3. GET: /api/items/locations (获取所有存放位置)
     [HttpGet("{categoryId:int}/{locationId:int}")]
-    [Authorize]
     public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemsByCategoryAndLocation(int categoryId, int locationId)
     {
         return Ok(await _itemService.GetItemsByCategoryAndLocationAsync(categoryId, locationId));
@@ -47,7 +45,7 @@ public class ItemsController : ControllerBase
 
     // 4. POST: /api/items (创建新物品)
     [HttpPost]
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.ItemCreate)]
     public async Task<ActionResult<ItemResponseDto>> Create([FromBody] CreateItemDto dto)
     {
         var createdItem = await _itemService.CreateItemAsync(dto);
@@ -57,7 +55,7 @@ public class ItemsController : ControllerBase
 
     // 5. PUT: /api/items/5 (修改物品)
     [HttpPut("{id:int}")]
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.ItemUpdate)]
     public async Task<ActionResult<ItemResponseDto>> Update(int id, [FromBody] UpdateItemDto dto)
     {
         var updatedItem = await _itemService.UpdateItemAsync(id, dto);
@@ -67,7 +65,7 @@ public class ItemsController : ControllerBase
 
     // 6. DELETE: /api/items/5 (删除物品)
     [HttpDelete("{id:int}")]
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.ItemDelete)]
     public async Task<IActionResult> Delete(int id)
     {
         var success = await _itemService.DeleteItemAsync(id);

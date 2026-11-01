@@ -38,8 +38,9 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task BeginTransactionAsync()
     {
+        // 必须把事务句柄保存到字段，否则 Commit/Rollback 会因为 _transaction 为 null 而静默失效
         if (_transaction != null) return;
-        await _context.Database.BeginTransactionAsync();
+        _transaction = await _context.Database.BeginTransactionAsync();
     }
 
     public async Task CommitAsync()
@@ -60,6 +61,9 @@ public class UnitOfWork : IUnitOfWork
 
     public void Dispose()
     {
+        // 未提交的事务随上下文释放一起回滚，这里显式释放避免连接泄漏
+        _transaction?.Dispose();
+        _transaction = null;
         _context.Dispose();
     }
 }

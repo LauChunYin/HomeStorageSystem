@@ -8,15 +8,15 @@ namespace HomeStorage.Infrastructure.Repositories;
 public class UserRepository : Repository<User>, IUserRepository
 {
     public UserRepository(AppDbContext context) : base(context) { }
-    
-    
+
+
     public async Task<User?> GetUserByNameAsync(string userName)
     {
         return await _context.Users
         .Include(u => u.Role)
-            .ThenInclude(r =>r.RolePermissions)
+            .ThenInclude(r => r.RolePermissions)
                 .ThenInclude(rp => rp.Permission)
-        .FirstOrDefaultAsync(u=>u.UserName == userName);
+        .FirstOrDefaultAsync(u => u.UserName == userName);
     }
 
     // 重写查询单个，加上 Include
@@ -33,6 +33,7 @@ public class UserRepository : Repository<User>, IUserRepository
     public override async Task<IEnumerable<User>> GetAllAsync()
     {
         return await _context.Users
+            .AsNoTracking()
             .Include(u => u.Role)
                 .ThenInclude(r => r.RolePermissions)
                     .ThenInclude(rp => rp.Permission)

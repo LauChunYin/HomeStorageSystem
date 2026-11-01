@@ -2,19 +2,19 @@ namespace HomeStorage.Domain.Entities;
 
 public class Category
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public int Id { get; private set; }
+    public string Name { get; private set; } = string.Empty;
 
-    public int? ParentId { get; set; }
-    public Category? Parent { get; set; }
-
-    // 容器：一个分类包含多个物品
-    public ICollection<Category> Children { get; set; } = new List<Category>();
+    public int? ParentId { get; private set; }
+    public Category? Parent { get; private set; }
 
     // 容器：一个分类包含多个物品
-    public ICollection<Item> Items { get; set; } = new List<Item>();
+    public ICollection<Category> Children { get; private set; } = new List<Category>();
 
-    public ICollection<RoleCategory> RoleCategories { get; set; } = new List<RoleCategory>();
+    // 容器：一个分类包含多个物品
+    public ICollection<Item> Items { get; private set; } = new List<Item>();
+
+    public ICollection<RoleCategory> RoleCategories { get; private set; } = new List<RoleCategory>();
 
     private Category() { }
 

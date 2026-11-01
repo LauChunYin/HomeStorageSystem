@@ -17,7 +17,7 @@ namespace HomeStorage.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -333,7 +333,7 @@ namespace HomeStorage.Infrastructure.Migrations
                         .WithMany("Items")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_items_location_location_id");
+                        .HasConstraintName("fk_items_locations_location_id");
 
                     b.Navigation("Category");
 
@@ -365,7 +365,7 @@ namespace HomeStorage.Infrastructure.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_role_categories_role_role_id");
+                        .HasConstraintName("fk_role_categories_roles_role_id");
 
                     b.Navigation("Category");
 

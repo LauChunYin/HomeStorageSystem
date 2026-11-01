@@ -1,14 +1,17 @@
 using HomeStorage.Application.Interfaces;
 using HomeStorage.Application.Services;
+using HomeStorage.Domain.Constants;
 using HomeStorage.Domain.Interfaces;
 using HomeStorage.Infrastructure.Data;
+using HomeStorage.Api.Authorization;
 using HomeStorage.Api.Middlewares;
 using HomeStorage.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +56,9 @@ builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // 告诉系统：当有人要 IItemService 时，给它 new 一个 ItemService
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IUserScopeProvider, UserScopeProvider>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -76,24 +82,38 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     // 2. 将鉴权规则全局应用到 Swagger 测试界面
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    // Microsoft.OpenApi 2.x 起：
+    //   - security requirement 的键改为 OpenApiSecuritySchemeReference（按「安全方案 Id」引用）；
+    //   - Swashbuckle 10 的 AddSecurityRequirement 改为接收工厂委托，以便把宿主文档传给引用对象。
+    c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
+            new OpenApiSecuritySchemeReference("Bearer", doc),
+            new List<string>()
         }
     });
 });
-builder.Services.AddAuthorization();
+// 4. 功能权限（P2-2）：为每个权限点注册同名授权策略（策略名 == PermissionCodes 中的编码）。
+//    处理器内部放行 Admin，其余角色校验 JWT 中的 "Permission" Claim。
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    foreach (var permissionCode in PermissionCodes.All)
+    {
+        options.AddPolicy(permissionCode, policy => policy
+            .RequireAuthenticatedUser()
+            .AddRequirements(new PermissionRequirement(permissionCode)));
+    }
+});
 
 var app = builder.Build();
+
+// 开发环境：启动时自动应用迁移并写入种子数据。
+// 种子逻辑是幂等的，重复启动不会产生重复数据，也不会覆盖手工调整过的授权。
+if (app.Environment.IsDevelopment())
+{
+    await DatabaseSeeder.InitializeAsync(app.Services);
+}
 
 // 注入全局异常拦截中间件（必须放在最靠前的位置）
 app.UseMiddleware<ExceptionHandlingMiddleware>();

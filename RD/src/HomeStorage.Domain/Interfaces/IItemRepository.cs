@@ -4,5 +4,9 @@ namespace HomeStorage.Domain.Interfaces;
 
 public interface IItemRepository : IRepository<Item>
 {
-    Task<IEnumerable<Item>> GetItemsByCategoryAndLocationAsync(int categoryId, int locationId);
+    Task<IEnumerable<Item>> SearchAsync(
+    IReadOnlyList<int>? allowedCategoryIds,
+    IReadOnlyList<int>? allowedLocationIds,
+    int? categoryId = null,
+    int? locationId = null);
 }

@@ -1,5 +1,6 @@
 using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
+using HomeStorage.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -23,7 +24,6 @@ public class UsersController : ControllerBase
     // 1. GET: /api/users (获取所有用户信息)
     // 返回 200 + 用户信息
     [HttpGet]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetAllUsers()
     {
         var users = await _userService.GetAllUsersAsync();
@@ -33,7 +33,7 @@ public class UsersController : ControllerBase
     // 2. POST: /api/users (创建用户)
     //返回：200+用户信息
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = PermissionCodes.UserCreate)]
     public async Task<ActionResult<UserResponseDto>> CreateUser([FromBody] CreateUserDto dto)
     {
         var user = await _userService.CreateUserAsync(dto);
@@ -43,7 +43,7 @@ public class UsersController : ControllerBase
     // 3. DELETE: /api/users/id (删除用户)
     // 返回：204
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = PermissionCodes.UserDelete)]
     public async Task<IActionResult> DeleteUser(int id)
     {
         await _userService.DeleteUserAsync(id);
@@ -54,17 +54,16 @@ public class UsersController : ControllerBase
     // 4. GET: /api/users/userName (获取该用户名的用户信息)
     // 返回：200+当前用户信息
     [HttpGet("{userName}")]
-    [Authorize]
     public async Task<ActionResult<UserResponseDto>> GetUserbyName(string userName)
     {
         var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
-        if(currentUserName != userName && !User.IsInRole("Admin"))
+        if (currentUserName != userName && !User.IsInRole("Admin"))
         {
             return Forbid();
         }
 
         var user = await _userService.GetUserByUserNameAsync(userName);
-        if(user == null) return NotFound("未找到该用户");
+        if (user == null) return NotFound("未找到该用户");
         return Ok(user);
     }
 
@@ -80,15 +79,13 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    //仅用户本人可以用
-    // 5. PUT: /api/users/id/Role (修改用户信息)
+    //仅管理员可以用：角色直接决定权限，若允许用户改自己的角色就等于允许自我提权
+    // 5. PUT: /api/users/id/Role (修改用户角色)
     //返回：204
     [HttpPut("{id:int}/Role")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = PermissionCodes.UserUpdate)]
     public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleDto dto)
     {
-        if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
-
         await _userService.UpdateUserRoleAsync(id, dto);
         return NoContent();
     }
@@ -99,7 +96,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> ChangeUserPassword(int id, [FromBody] ChangePasswordDto dto)
     {
         if (!IsOwnerOrAdmin(id)) return Forbid(); // 防水平越权
-        
+
         await _userService.ChangePasswordAsync(id, dto);
         return NoContent();
     }
@@ -110,9 +107,9 @@ public class UsersController : ControllerBase
     /// <param name="roleId">角色 ID</param>
     /// <param name="dto">选中的权限 ID 列表</param>
     [HttpPut("roles/{roleId:int}/permissions")]
-    [Authorize(Roles = "Admin")] // 核心防线：只有系统管理员有权调整权限
+    [Authorize(Policy = PermissionCodes.RolePermissionAssign)]
     public async Task<IActionResult> UpdateRolePermissions(
-        [FromRoute] int roleId, 
+        [FromRoute] int roleId,
         [FromBody] UpdateRolePermissionsDto dto)
     {
         await _userService.UpdateRolePermissionsAsync(roleId, dto.PermissionIds);
@@ -125,9 +122,9 @@ public class UsersController : ControllerBase
     /// <param name="roleId">角色 ID</param>
     /// <param name="dto">选中的品类 ID 列表</param>
     [HttpPut("roles/{roleId:int}/categories")]
-    [Authorize(Roles = "Admin")] // 核心防线：只有系统管理员有权调整数据权限
+    [Authorize(Policy = PermissionCodes.RoleCategoryAssign)]
     public async Task<IActionResult> UpdateRoleCategories(
-        [FromRoute] int roleId, 
+        [FromRoute] int roleId,
         [FromBody] UpdateRoleCategoriesDto dto)
     {
         await _userService.UpdateRoleCategoriesAsync(roleId, dto.CategoryIds);
@@ -140,9 +137,9 @@ public class UsersController : ControllerBase
     /// <param name="roleId">角色 ID</param>
     /// <param name="dto">选中的品类 ID 列表</param>
     [HttpPut("roles/{roleId:int}/locations")]
-    [Authorize(Roles = "Admin")] // 核心防线：只有系统管理员有权调整数据权限
+    [Authorize(Policy = PermissionCodes.RoleLocationAssign)]
     public async Task<IActionResult> UpdateRoleLocations(
-        [FromRoute] int roleId, 
+        [FromRoute] int roleId,
         [FromBody] UpdateRoleLocationsDto dto)
     {
         await _userService.UpdateRoleLocationsAsync(roleId, dto.LocationIds);
@@ -153,7 +150,7 @@ public class UsersController : ControllerBase
     private bool IsOwnerOrAdmin(int targetUserId)
     {
         var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == targetUserId) 
+        return (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == targetUserId)
                || User.IsInRole("Admin");
     }
 }

@@ -5,16 +5,16 @@ public class Location
     public int Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
 
-    public int? ParentId { get; set; }
-    public Location? Parent { get; set; }
+    public int? ParentId { get; private set; }
+    public Location? Parent { get; private set; }
 
     public string? ImageUrl { get; private set; }
 
-    public ICollection<Item> Items { get; set; } = new List<Item>();
+    public ICollection<Item> Items { get; private set; } = new List<Item>();
 
-    public ICollection<Location> Children { get; set; } = new List<Location>();
+    public ICollection<Location> Children { get; private set; } = new List<Location>();
 
-    public ICollection<RoleLocation> RoleLocations { get; set; } = new List<RoleLocation>();
+    public ICollection<RoleLocation> RoleLocations { get; private set; } = new List<RoleLocation>();
 
 
     private Location() { }

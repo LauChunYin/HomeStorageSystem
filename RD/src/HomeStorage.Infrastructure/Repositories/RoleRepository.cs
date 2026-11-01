@@ -9,7 +9,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
 {
     public RoleRepository(AppDbContext context) : base(context) { }
 
-    public async Task<Role?> GetRoleWithPermissionsAsyns(int roleId)
+    public async Task<Role?> GetRoleWithPermissionsAsync(int roleId)
     {
         return await _context.Roles
             .Include(r => r.RolePermissions)
@@ -17,7 +17,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 
-    public async Task<Role?> GetRoleWithCategoriesAsyns(int roleId)
+    public async Task<Role?> GetRoleWithCategoriesAsync(int roleId)
     {
         return await _context.Roles
             .Include(r => r.RoleCategories)
@@ -25,7 +25,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
             .FirstOrDefaultAsync(r => r.Id == roleId);
     }
 
-    public async Task<Role?> GetRoleWithLocationsAsyns(int roleId)
+    public async Task<Role?> GetRoleWithLocationsAsync(int roleId)
     {
         return await _context.Roles
             .Include(r => r.RoleLocations)
@@ -39,11 +39,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
 
         foreach (var permissionId in permissionIds.Distinct())
         {
-            role.RolePermissions.Add(new RolePermission
-            {
-                RoleId = role.Id,
-                PermissionId = permissionId
-            });
+            role.RolePermissions.Add(RolePermission.Create(role.Id, permissionId));
         }
     }
 
@@ -53,11 +49,7 @@ public class RoleRepository : Repository<Role>, IRoleRepository
 
         foreach (var categoryId in categoryIds.Distinct())
         {
-            role.RoleCategories.Add(new RoleCategory
-            {
-                RoleId = role.Id,
-                CategoryId = categoryId
-            });
+            role.RoleCategories.Add(RoleCategory.Create(role.Id, categoryId));
         }
     }
 
@@ -67,12 +59,24 @@ public class RoleRepository : Repository<Role>, IRoleRepository
 
         foreach (var locationId in locationIds.Distinct())
         {
-            role.RoleLocations.Add(new RoleLocation
-            {
-                RoleId = role.Id,
-                LocationId = locationId
-            });
+            role.RoleLocations.Add(RoleLocation.Create(role.Id, locationId));
         }
+    }
+
+    public async Task<List<int>> GetAllowedCategoryIdsAsync(int roleId)
+    {
+        return await _context.RoleCategories
+            .Where(rc => rc.RoleId == roleId)
+            .Select(rc => rc.CategoryId)
+            .ToListAsync();
+    }
+
+    public async Task<List<int>> GetAllowedLocationIdsAsync(int roleId)
+    {
+        return await _context.RoleLocations
+            .Where(rl => rl.RoleId == roleId)
+            .Select(rl => rl.LocationId)
+            .ToListAsync();
     }
 
 }

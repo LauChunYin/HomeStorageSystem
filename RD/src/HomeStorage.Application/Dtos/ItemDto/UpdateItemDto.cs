@@ -15,5 +15,6 @@ public class UpdateItemDto
     [Range(1, int.MaxValue, ErrorMessage = "位置不能为空")]
     public int? LocationId { get; set; }
 
+    [MaxLength(500, ErrorMessage = "图片地址长度不能超过500个字符")]
     public string? ImageUrl { get; set; }
 }

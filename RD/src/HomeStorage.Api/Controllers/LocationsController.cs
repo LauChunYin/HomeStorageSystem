@@ -1,5 +1,6 @@
 using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
+using HomeStorage.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -23,7 +24,6 @@ public class LocationsController : ControllerBase
     // 1. GET: /api/locations (获取所有位置信息)
     // 返回 200 + 位置信息
     [HttpGet]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<LocationResponseDto>>> GetAllLocations()
     {
         var locations = await _locationService.GetAllLocationsAsync();
@@ -33,7 +33,7 @@ public class LocationsController : ControllerBase
     // 2. POST: /api/locations (创建位置)
     //返回：200+位置信息
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = PermissionCodes.LocationCreate)]
     public async Task<ActionResult<LocationResponseDto>> CreateLocation([FromBody] CreateLocationDto dto)
     {
         var location = await _locationService.CreateLocationAsync(dto);
@@ -43,7 +43,7 @@ public class LocationsController : ControllerBase
     // 3. DELETE: /api/locations/id (删除位置)
     // 返回：204
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = PermissionCodes.LocationDelete)]
     public async Task<IActionResult> DeleteLocation(int id)
     {
         await _locationService.DeleteLocationAsync(id);
@@ -53,7 +53,6 @@ public class LocationsController : ControllerBase
     // 4. GET: /api/locations/name (获取该位置名的位置信息)
     // 返回：200+当前位置信息
     [HttpGet("{name}")]
-    [Authorize]
     public async Task<ActionResult<LocationResponseDto>> GetLocationbyName(string name)
     {
         var location = await _locationService.GetLocationByNameAsync(name);
@@ -63,6 +62,7 @@ public class LocationsController : ControllerBase
     // 5. PUT: /api/locations/id (修改位置信息)
     //返回：204
     [HttpPut("{id:int}/profile")]
+    [Authorize(Policy = PermissionCodes.LocationUpdate)]
     public async Task<IActionResult> UpdateLocationInfo(int id, [FromBody] UpdateLocationDto dto)
     {
         await _locationService.UpdateLocationAsync(id, dto);

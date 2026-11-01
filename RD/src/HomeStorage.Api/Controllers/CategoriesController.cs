@@ -1,5 +1,6 @@
 using HomeStorage.Application.Dtos;
 using HomeStorage.Application.Interfaces;
+using HomeStorage.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -23,7 +24,6 @@ public class CategoriesController : ControllerBase
     // 1. GET: /api/categories (获取所有品类信息)
     // 返回 200 + 品类信息
     [HttpGet]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetAllCategories()
     {
         var categories = await _categoryService.GetAllCategoriesAsync();
@@ -33,7 +33,7 @@ public class CategoriesController : ControllerBase
     // 2. POST: /api/categories (创建品类)
     //返回：200+品类信息
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = PermissionCodes.CategoryCreate)]
     public async Task<ActionResult<CategoryResponseDto>> CreateCategory([FromBody] CreateCategoryDto dto)
     {
         var category = await _categoryService.CreateCategoryAsync(dto);
@@ -43,7 +43,7 @@ public class CategoriesController : ControllerBase
     // 3. DELETE: /api/categories/id (删除品类)
     // 返回：204
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = PermissionCodes.CategoryDelete)]
     public async Task<IActionResult> DeleteCategory(int id)
     {
         await _categoryService.DeleteCategoryAsync(id);
@@ -53,7 +53,6 @@ public class CategoriesController : ControllerBase
     // 4. GET: /api/categories/name (获取该品类名的品类信息)
     // 返回：200+当前品类信息
     [HttpGet("{name}")]
-    [Authorize]
     public async Task<ActionResult<CategoryResponseDto>> GetCategorybyName(string name)
     {
 
@@ -64,6 +63,7 @@ public class CategoriesController : ControllerBase
     // 5. PUT: /api/categories/id (修改位置信息)
     //返回：204
     [HttpPut("{id:int}")]
+    [Authorize(Policy = PermissionCodes.CategoryUpdate)]
     public async Task<IActionResult> UpdateCategoryInfo(int id, [FromBody] UpdateCategoryDto dto)
     {
         await _categoryService.UpdateCategoryAsync(id, dto);
